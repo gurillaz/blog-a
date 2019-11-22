@@ -30,6 +30,7 @@ class ArticleController extends Controller
             ->where('meta_is-feature', 'true')
             ->where('meta_status', 'published')
             ->with(['category:id,name', 'user:id,name'])
+            ->withCount('comments')
             ->orderBy('publishing_date', 'desc')->take(1)
             ->get();
 
@@ -39,6 +40,8 @@ class ArticleController extends Controller
             ->where('meta_is-feature', 'true')
             ->where('meta_status', 'published')
             ->with(['category:id,name', 'user:id,name'])
+            ->withCount('comments')
+
             ->orderBy('publishing_date', 'desc')->take(3)
             ->get();
 
@@ -46,6 +49,7 @@ class ArticleController extends Controller
         $latest = Article::select(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
             ->where('meta_status', 'published')
             ->with(['category:id,name', 'user:id,name'])
+            ->withCount('comments')
             ->orderBy('publishing_date', 'desc')->take(10)
             ->get();
         $categories = Category::select(['id', 'name'])->withCount('articles')->orderBy('articles_count', 'desc')->take(12)

@@ -55,6 +55,12 @@ class DatabaseSeeder extends Seeder
         
         $articles = Article::all();
 
+        //Bookmarks
+
+        $users->each(function($user) use($articles){
+            $user->bookmarks()->sync($articles->random(5));
+        });
+
 
 
         factory('App\Comment', 50)->make()

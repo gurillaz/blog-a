@@ -5,7 +5,7 @@ import Vue from 'vue';
 import ClientLayout from './js/Layouts/ClientLayout.vue';
 import ErrorPage from './js/pages/error_page.vue';
 
-import Home from './js/components/Home.vue';
+import Home from './js/pages/home.vue';
 import Login from './js/components/Login.vue';
 import Register from './js/components/Register.vue';
 import ForgotPassword from './js/components/ForgotPassword.vue';

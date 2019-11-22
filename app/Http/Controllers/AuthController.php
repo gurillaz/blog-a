@@ -7,6 +7,7 @@ use JWTAuth;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterFormRequest;
+use App\Http\Requests\ToggleBookmarkRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Hash;
 use Illuminate\Auth\Events\PasswordReset;
@@ -73,7 +74,8 @@ class AuthController extends Controller
     // Fetch a specific user's informations
     public function user(Request $request)
     {
-        $user = User::find(Auth::user()->id);
+        $user = User::where('id', Auth::user()->id)->first();
+        $user['bookmarks'] = $user->bookmarks()->pluck('id');
         return response()->json([
             'status' => 'success',
             'data' => $user
@@ -207,6 +209,18 @@ class AuthController extends Controller
             [
                 'status' => 'success',
                 'user' => $user
+            ],
+            200
+        );
+    }
+    public function toggle_bookmark(ToggleBookmarkRequest $request)
+    {
+        $validated = $request->validated();
+        
+        Auth::user()->bookmarks()->toggle($validated['article_id']);
+        return response()->json(
+            [
+                'status' => 'success',
             ],
             200
         );

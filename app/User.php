@@ -26,7 +26,7 @@ class User extends Authenticatable implements JWTSubject
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password', 'remember_token','pivot'
     ];
 
     /**
@@ -83,6 +83,11 @@ class User extends Authenticatable implements JWTSubject
     public function tags(){
 
         return $this->hasMany(Tag::class,'user_id');
+        
+    }    
+    public function bookmarks(){
+
+        return $this->belongsToMany(Article::class, 'bookmarks', 'user_id', 'article_id');
         
     }
 }

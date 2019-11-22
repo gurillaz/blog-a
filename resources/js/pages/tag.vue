@@ -2,7 +2,7 @@
     <v-container>
         <v-row class="mb-12">
             <v-col cols="12">
-                <p class="title py-0 my-0" >Tag</p>
+                <p class="title py-0 my-0">Tag</p>
                 <span class="headline font-weight-bold py-0 my-0">#{{resource.name}}</span>
                 <p class="caption">Articles: {{resource_relations.articles.length}}</p>
                 <!-- <span class="title">{{$auth.user().name}}</span> -->
@@ -13,9 +13,12 @@
         </v-row>
         <v-row>
             <v-col cols="12">
-                <p class="pb-0 mb-0 subtitle font-weight-bold">Articles with <span class="red--text font-weight-bold">#{{resource.name}}</span> tag</p>
+                <p class="pb-0 mb-0 subtitle font-weight-bold">
+                    Articles with
+                    <span class="red--text font-weight-bold">#{{resource.name}}</span> tag
+                </p>
             </v-col>
-                        <v-col v-for="(article,index) in resource_relations.articles" :key="index" cols="12">
+            <v-col v-for="(article,index) in resource_relations.articles" :key="index" cols="12">
                 <v-card class="pl-0 py-0" tile outlined>
                     <v-container class="pl-0 py-0">
                         <v-row justify="space-between">
@@ -39,11 +42,13 @@
                                             :to="`/user/${article.user.id}`"
                                         >{{article.user.name}}</router-link>
                                         <span>-</span>
+                                        <span class="black--text">{{article.publishing_date}}</span>
+                                        <!-- <span>-</span>
                                         <router-link
                                             class="black--text text-uppercase subtitle"
                                             style="text-decoration:none"
                                             :to="`/category/${article.category.id}`"
-                                        >{{article.category.name}}</router-link>
+                                        >{{article.category.name}}</router-link>-->
                                     </v-card-subtitle>
                                     <v-card-text
                                         class="black--text serif-font pt-0 pb-0"
@@ -69,12 +74,29 @@
                                         >Read</v-btn>
 
                                         <!-- <v-btn color="orange" text>Share</v-btn> -->
+                                        <span class="black--text ml-auto mr-3 mb-1">
+                                            <v-icon color="black">mdi-comment-outline</v-icon>
+                                            <span class="caption mb-3">{{article.comments_count}}</span>
+                                        </span>
                                         <v-btn
                                             depressed
                                             small
                                             color="white"
                                             fab
-                                            class="ml-auto mr-2 mb-2"
+                                            class="mr-2 mb-2"
+                                            v-if="$auth.user().bookmarks.includes(article.id)"
+                                            v-on:click="toggle_bookmark(article.id)"
+                                        >
+                                            <v-icon color="red">mdi-bookmark</v-icon>
+                                        </v-btn>
+                                        <v-btn
+                                            depressed
+                                            small
+                                            color="white"
+                                            fab
+                                            class="mr-2 mb-2"
+                                            v-else
+                                            v-on:click="toggle_bookmark(article.id)"
                                         >
                                             <v-icon>mdi-bookmark-outline</v-icon>
                                         </v-btn>
@@ -85,7 +107,6 @@
                     </v-container>
                 </v-card>
             </v-col>
-
         </v-row>
     </v-container>
 </template>
@@ -97,12 +118,40 @@ export default {
         return {
             resource: {},
             resource_relations: {
-                articles:[],
+                articles: []
             }
         };
     },
     computed: {},
-    methods: {},
+    methods: {
+        toggle_bookmark(article_id) {
+            console.log(this.$auth.user().bookmarks);
+            console.log(article_id);
+            let currentObj = this;
+            if (currentObj.$auth.user().bookmarks.includes(article_id)) {
+                axios
+                    .post("auth/toggle_bookmark", { article_id: article_id })
+                    .then(function(resp) {
+                        currentObj.$auth.user().bookmarks = currentObj.$auth
+                            .user()
+                            .bookmarks.filter(bm => bm !== article_id);
+                    })
+                    .catch(function(resp) {
+                        console.log(resp);
+                    });
+            } else {
+                axios
+                    .post("auth/toggle_bookmark", { article_id: article_id })
+                    .then(function(resp) {
+                        // currentObj.$auth.user().bookmarks =
+                        currentObj.$auth.user().bookmarks.push(article_id);
+                    })
+                    .catch(function(resp) {
+                        console.log(resp);
+                    });
+            }
+        }
+    },
     beforeMount: function() {
         let currentObj = this;
         axios

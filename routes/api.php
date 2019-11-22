@@ -41,6 +41,7 @@ Route::prefix('auth')->group(function () {
         Route::get('user', 'AuthController@user');
         Route::put('edit/{user}', 'AuthController@update');
         Route::post('logout', 'AuthController@logout');
+        Route::post('toggle_bookmark', 'AuthController@toggle_bookmark');
     });
     //Auth related data
 
