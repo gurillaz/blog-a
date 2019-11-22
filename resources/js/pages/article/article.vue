@@ -1,0 +1,535 @@
+<template>
+    <div>
+        <v-row>
+            <v-col cols="12">
+                <v-card tile outlined>
+                    <v-card-title class="serif-font" style="font-size:28px">{{resource.title}}</v-card-title>
+                    <v-card-subtitle class="my-1">
+                        <router-link
+                            class="blue--text subtitle"
+                            :to="`/user/${resource.user.id}`"
+                        >{{resource.user.name}}</router-link>
+                        <span>-</span>
+                        <router-link
+                            class="black--text text-uppercase subtitle"
+                            style="text-decoration:none"
+                            :to="`/category/${resource.category.id}`"
+                        >{{resource.category.name}}</router-link>
+                    </v-card-subtitle>
+                    <div class="mx-5">
+                        <v-card-text
+                            class="black--text serif-font"
+                            style="font-size:16px; line-height:1.3; letter-spacing:1px;"
+                            v-html="resource.summary"
+                        >
+                            <!-- <div>Whitsunday Island, Whitsunday Islands</div> -->
+                        </v-card-text>
+                    </div>
+                    <v-card-text>
+                        <v-img
+                            class="px-1n"
+                            width="auto"
+                            height="auto"
+                            :src="`/storage/images/${resource.image_path}`"
+                        ></v-img>
+                        <div class="mx-5 my-12">
+                            <v-card-text
+                                class="black--text serif-font"
+                                style="font-size:16px; line-height:1.3; letter-spacing:1px"
+                                v-html="resource.body"
+                            >
+                                <!-- <div>Whitsunday Island, Whitsunday Islands</div> -->
+                            </v-card-text>
+                        </div>
+                        <!-- <v-card-actions>
+                                        <v-btn
+                                            color="orange"
+                                            text
+                                            :to="`/article/${resource.slug}`"
+                                        >Read</v-btn>
+
+                                        <v-btn
+                                            depressed
+                                            small
+                                            color="white"
+                                            fab
+                                            class="ml-auto mr-2 mb-2"
+                                        >
+                                            <v-icon>mdi-bookmark-outline</v-icon>
+                                        </v-btn>
+                        </v-card-actions>-->
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+        <v-row>
+            <!-- <v-col cols="12">
+                <p class="pb-0 mb-0 headline font-weight-bold">Featured</p>
+            </v-col>-->
+            <v-col cols="12">
+                <v-card class="mx-auto" tile outlined>
+                    <v-card-text>
+                        <v-container fluid>
+                            <v-row>
+                                <v-col cols="12">
+                                    <p
+                                        class="pb-0 mb-0 headline black--text font-weight-bold"
+                                    >Comments</p>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="11" class="pb-0 mb-0">
+                                    <v-textarea
+                                        v-model="new_comment.body"
+                                        outlined
+                                        label="Add new comment"
+                                    ></v-textarea>
+                                </v-col>
+
+                                <v-col cols="1">
+                                    <v-btn
+                                        block
+                                        color="primary"
+                                        small
+                                        dark
+                                        @click="add_new_comment()"
+                                    >Save</v-btn>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col cols="12">
+                                    <v-card
+                                        outlined
+                                        v-for="(comment,index) in sorted_comments"
+                                        :key="index"
+                                        class="my-3"
+                                    >
+                                        <v-card-subtitle
+                                            class="pl-3 pt-3 font-weight-bold black--text"
+                                        >
+                                        
+                                            <!-- User - 12/12/12 12:12 -->
+                                            <template v-if="comment.user!=null">
+                                                    
+                                            {{comment.user.name}}
+                                            <span
+                                                class="mx-1"
+                                                v-if="comment.user.id == resource.id || comment.user.role == 'admin' "
+                                            >
+                                                <span
+                                                    v-if="comment.user.id == resource.id"
+                                                    class="green--text small"
+                                                >OP</span>
+                                                <span
+                                                    v-if="comment.user.role == 'admin'"
+                                                    class="red--text small"
+                                                >Admin</span>
+                                            </span>
+                                            </template>
+                                            <template v-else>
+                                                    User
+                                            </template>
+                                            <span
+                                                class="caption grey--text"
+                                            >- {{comment.created_at}}</span>
+                                        </v-card-subtitle>
+                                        <v-card-text>
+                                            <p class="black--text">{{comment.body}}</p>
+                                        </v-card-text>
+                                        <v-card-actions>
+                                            <v-btn
+                                                text
+                                                small
+                                                class="ml-auto"
+                                                :disabled="!(comment.user_id == $auth.user().id || $auth.user().role == 'admin') "
+                                                v-on:click="show_reply_form_name = comment.id"
+                                            >Reply</v-btn>
+                                            <v-btn
+                                                text
+                                                small
+                                                class="mr-1"
+                                                :disabled="!(comment.user_id == $auth.user().id || $auth.user().role == 'admin') "
+                                                v-on:click="delete_comment(comment.id)"
+                                            >Delete</v-btn>
+                                            <v-btn
+                                                text
+                                                small
+                                                class="mr-1"
+                                                :disabled="!(comment.user_id == $auth.user().id || $auth.user().role == 'admin') "
+                                                v-on:click="show_edit_comment_dialog(comment)"
+                                            >Edit</v-btn>
+                                        </v-card-actions>
+                                        <v-row class="mx-3" v-if="show_reply_form_name==comment.id">
+                                            <v-col cols="11" class="pb-0 mb-0">
+                                                <v-textarea
+                                                    v-model="new_reply.body"
+                                                    outlined
+                                                    label="Add new reply"
+                                                ></v-textarea>
+                                            </v-col>
+
+                                            <v-col cols="1">
+                                                <v-btn
+                                                    block
+                                                    color="primary"
+                                                    small
+                                                    dark
+                                                    @click="add_new_reply(comment.id)"
+                                                >Save</v-btn>
+                                                <v-btn
+                                                    class="mt-3"
+                                                    block
+                                                    outlined
+                                                    color="red"
+                                                    small
+                                                    dark
+                                                    @click="show_reply_form_name = ''"
+                                                >Cancel</v-btn>
+                                            </v-col>
+                                        </v-row>
+                                        <v-card
+                                            outlined
+                                            color="grey lighten-4"
+                                            v-for="(reply,index) in comment.replies"
+                                            :key="index"
+                                            class="my-3 ml-5 mr-3"
+                                        >
+                                            <v-card-subtitle
+                                                class="pl-3 pt-3 font-weight-bold black--text"
+                                            >
+                                                <!-- User - 12/12/12 12:12 -->
+                                                {{reply.user.name}}
+                                                <span
+                                                    class="mx-1"
+                                                    v-if="reply.user.id == resource.id || reply.user.role == 'admin' "
+                                                >
+                                                    <span
+                                                        v-if="reply.user.id == resource.id"
+                                                        class="green--text small"
+                                                    >OP</span>
+                                                    <span
+                                                        v-if="reply.user.role == 'admin'"
+                                                        class="red--text small"
+                                                    >Admin</span>
+                                                </span>
+                                                <span
+                                                    class="caption grey--text"
+                                                >- {{reply.created_at}}</span>
+                                            </v-card-subtitle>
+                                            <v-card-text>
+                                                <p class="black--text">{{reply.body}}</p>
+                                            </v-card-text>
+                                            <v-card-actions>
+                                                <v-btn
+                                                    text
+                                                    small
+                                                    class="ml-auto"
+                                                    :disabled="!(reply.user_id == $auth.user().id || $auth.user().role == 'admin') "
+                                                    v-on:click="delete_reply(comment.id,reply.id)"
+                                                >Delete</v-btn>
+                                                <v-btn
+                                                    text
+                                                    small
+                                                    class="mr-1"
+                                                    :disabled="!(reply.user_id == $auth.user().id || $auth.user().role == 'admin') "
+                                                    v-on:click="show_edit_reply_dialog(reply,comment.id)"
+                                                >Edit</v-btn>
+                                            </v-card-actions>
+                                        </v-card>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                    </v-card-text>
+                </v-card>
+            </v-col>
+        </v-row>
+
+        <v-dialog v-model="edit_comment_dialog" persistent max-width="50vw">
+            <v-card>
+                <v-container>
+                    <v-row class="mx-3">
+                        <v-col cols="10" class="pb-0 mb-0">
+                            <v-textarea v-model="edit_comment.body" outlined label="Edit comment"></v-textarea>
+                        </v-col>
+
+                        <v-col cols="2">
+                            <v-btn block color="primary" small dark @click="update_comment()">Save</v-btn>
+                            <v-btn
+                                class="mt-3"
+                                block
+                                outlined
+                                color="red"
+                                small
+                                dark
+                                @click="edit_comment_dialog=false"
+                            >Cancel</v-btn>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-card>
+        </v-dialog>
+        <v-dialog v-model="edit_replay_dialog" persistent max-width="50vw">
+            <v-card>
+                <v-container>
+                    <v-row class="mx-3">
+                        <v-col cols="10" class="pb-0 mb-0">
+                            <v-textarea v-model="edit_comment.body" outlined label="Edit comment"></v-textarea>
+                        </v-col>
+
+                        <v-col cols="2">
+                            <v-btn block color="primary" small dark @click="update_reply()">Save</v-btn>
+                            <v-btn
+                                class="mt-3"
+                                block
+                                outlined
+                                color="red"
+                                small
+                                dark
+                                @click="edit_replay_dialog=false"
+                            >Cancel</v-btn>
+                        </v-col>
+                    </v-row>
+                </v-container>
+            </v-card>
+        </v-dialog>
+    </div>
+</template>
+<script>
+export default {
+    props: ["slug"],
+    data() {
+        return {
+            new_comment: {
+                body: "",
+                commentable_id: "",
+                commentable_type: ""
+            },
+
+            show_reply_form_name: "",
+            new_reply: {
+                body: "",
+                commentable_id: "",
+                commentable_type: ""
+            },
+
+            resource: {
+                name: ""
+            },
+            resource_relations: {
+                comments: [],
+                user: []
+            },
+            data_autofill: [],
+
+            edit_comment_dialog: false,
+            edit_replay_dialog: false,
+            edit_comment: {
+                parent_comment_id: "",
+                id: "",
+                body: ""
+            }
+        };
+    },
+    computed: {
+        sorted_comments() {
+            return this.resource_relations.comments.sort(function(a, b) {
+                let a_date = Date.parse(a.created_at);
+                let b_date = Date.parse(b.created_at);
+                return b_date - a_date;
+            });
+        }
+    },
+    methods: {
+        show_edit_comment_dialog(comment) {
+            let currentObj = this;
+            currentObj.edit_comment.body = comment.body;
+            currentObj.edit_comment.id = comment.id;
+            currentObj.edit_comment_dialog = true;
+        },
+        update_comment: function() {
+            let currentObj = this;
+
+            axios
+                .put(
+                    `/comment/${currentObj.edit_comment.id}`,
+                    currentObj.edit_comment
+                )
+                .then(function(resp) {
+                    currentObj.resource_relations.comments.filter(
+                        comment => comment.id == currentObj.edit_comment.id
+                    )[0].body = currentObj.edit_comment.body;
+
+                    currentObj.edit_comment = {
+                        id: "",
+                        body: ""
+                    };
+                    currentObj.edit_comment_dialog = false;
+                })
+                .catch(function(resp) {
+                    console.log(resp);
+                });
+        },
+        show_edit_reply_dialog(reply, parent_comment_id) {
+            let currentObj = this;
+            currentObj.edit_comment.parent_comment_id = parent_comment_id;
+            currentObj.edit_comment.body = reply.body;
+            currentObj.edit_comment.id = reply.id;
+            currentObj.edit_replay_dialog = true;
+        },
+        update_reply: function() {
+            let currentObj = this;
+
+            axios
+                .put(
+                    `/comment/${currentObj.edit_comment.id}`,
+                    currentObj.edit_comment
+                )
+                .then(function(resp) {
+                    currentObj.resource_relations.comments
+                        .filter(
+                            comment =>
+                                comment.id ==
+                                currentObj.edit_comment.parent_comment_id
+                        )[0]
+                        .replies.filter(
+                            rep => rep.id == currentObj.edit_comment.id
+                        )[0].body = currentObj.edit_comment.body;
+
+                    currentObj.edit_comment = {
+                        parent_comment_id: "",
+                        id: "",
+                        body: ""
+                    };
+                    currentObj.edit_replay_dialog = false;
+                })
+                .catch(function(resp) {
+                    console.log(resp);
+                });
+        },
+        add_new_comment() {
+            let currentObj = this;
+            currentObj.new_comment.user_id = currentObj.$auth.user().id;
+            currentObj.new_comment.commentable_type = "App\\Article";
+            currentObj.new_comment.commentable_id = currentObj.resource.id;
+
+            // alert(currentObj.new_comment);
+
+            axios
+                .post(`/comment`, currentObj.new_comment)
+                .then(function(resp) {
+                    // currentObj.saving_errors = false;
+
+                    // console.log(resp.data.comment);
+                    currentObj.resource_relations.comments.push(
+                        resp.data.comment
+                    );
+                    currentObj.new_comment = {
+                        body: "",
+                        commentable_id: "",
+                        commentable_type: ""
+                    };
+
+                    // currentObj.$store.dispatch("showSnackbar", {
+                    //     color: "success",
+                    //     text: "Te dhenat u ruajten!"
+                    // });
+                })
+                .catch(function(resp) {
+                    console.log(resp.data);
+                });
+        },
+        add_new_reply(parent_comment_id) {
+            let currentObj = this;
+            currentObj.new_reply.user_id = currentObj.$auth.user().id;
+            currentObj.new_reply.commentable_type = "App\\Comment";
+            currentObj.new_reply.commentable_id = parent_comment_id;
+
+            // console.log(currentObj.new_reply);
+            // return;
+            // alert(currentObj.new_comment);
+
+            axios
+                .post(`/comment`, currentObj.new_reply)
+                .then(function(resp) {
+                    // currentObj.saving_errors = false;
+                    // console.log(resp.data.comment)
+                    // console.log(resp.data.comment);
+                    currentObj.resource_relations.comments
+                        .filter(comm => comm.id == parent_comment_id)[0]
+                        .replies.unshift(resp.data.comment);
+                    currentObj.new_reply = {
+                        body: "",
+                        commentable_id: "",
+                        commentable_type: ""
+                    };
+                    currentObj.show_reply_form_name = "";
+
+                    // currentObj.$store.dispatch("showSnackbar", {
+                    //     color: "success",
+                    //     text: "Te dhenat u ruajten!"
+                    // });
+                })
+                .catch(function(resp) {
+                    console.log(resp.data);
+                });
+        },
+        delete_reply(parent_comment_id, reply_id) {
+            let currentObj = this;
+            if (confirm("Delete comment?") === false) {
+                return;
+            }
+            axios(`/comment/${reply_id}`, {
+                method: "delete"
+            })
+                .then(function(resp) {
+                    currentObj.resource_relations.comments.filter(
+                        comment => comment.id == parent_comment_id
+                    )[0].replies = currentObj.resource_relations.comments
+                        .filter(comment => comment.id == parent_comment_id)[0]
+                        .replies.filter(rep => rep.id != reply_id);
+                })
+                .catch(function(resp) {
+                    console.log(resp);
+                });
+        },
+        delete_comment(deleted_comment_id) {
+            let currentObj = this;
+            if (confirm("Delete comment?") === false) {
+                return;
+            }
+            axios(`/comment/${deleted_comment_id}`, {
+                method: "delete"
+            })
+                .then(function(resp) {
+                    currentObj.resource_relations.comments = currentObj.resource_relations.comments.filter(
+                        comment => comment.id != deleted_comment_id
+                    );
+                })
+                .catch(function(resp) {
+                    console.log(resp);
+                });
+        }
+    },
+    beforeMount: function() {
+        // console.log(this.$auth.user())
+        let currentObj = this;
+        axios
+            .get(`/article/slug/${currentObj.slug}`)
+            .then(function(resp) {
+                // console.log(resp.data);
+
+                currentObj.resource = resp.data.resource;
+                currentObj.resource_relations = resp.data.resource_relations;
+                currentObj.data_autofill = resp.data.data_autofill;
+
+                // currentObj.belongs_to = resp.data.belongs_to;
+                // currentObj.created_by = resp.data.created_by;
+                // currentObj.model = resp.data.model;
+            })
+            .catch(function(resp) {
+                console.log(resp);
+            });
+    }
+};
+</script>
