@@ -25,7 +25,7 @@ class ArticleController extends Controller
     public function index()
     {
 
-        $latest_featured = Article::select(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', 'user_id'])
+        $latest_featured = Article::select(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
 
             ->where('meta_is-feature', 'true')
             ->where('meta_status', 'published')
@@ -34,7 +34,7 @@ class ArticleController extends Controller
             ->orderBy('publishing_date', 'desc')->take(1)
             ->get();
 
-        $others_featured = Article::select(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', 'user_id'])
+        $others_featured = Article::select(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
 
             ->where('id', '!=', $latest_featured[0]->id)
             ->where('meta_is-feature', 'true')

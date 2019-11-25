@@ -1,6 +1,5 @@
 <template>
     <v-app>
-
         <v-app-bar app absolute color="white" height="100" elevation="2">
             <v-container class="pt-0 mt-0 pb-0">
                 <v-row class="py-0 mb-1">
@@ -22,7 +21,22 @@
                             </div>
                         </template>
                         <template v-else>
-                            <v-btn text small class="mt-2">{{$auth.user().name}}</v-btn>
+                            <v-menu offset-y>
+                                <template v-slot:activator="{ on }">
+                                    <v-btn text small class="mt-2" v-on="on">
+                                        {{$auth.user().name}}
+                                        <v-icon right>mdi-chevron-down</v-icon>
+                                    </v-btn>
+                                </template>
+                                <v-list>
+                                    <v-list-item v-on:click="$auth.logout()">
+                                        <v-list-item-title>Logout</v-list-item-title>
+                                    </v-list-item>
+                                    <v-list-item to="/profile">
+                                        <v-list-item-title>Profile</v-list-item-title>
+                                    </v-list-item>
+                                </v-list>
+                            </v-menu>
                         </template>
                         <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer" /> -->
                     </v-col>
@@ -46,7 +60,7 @@
                                     to="/search"
                                     class="main-toolbar-link my-auto text-uppercase caption font-weight-bold mx-2"
                                 >Search</router-link>
-                                                             <router-link
+                                <router-link
                                     to="/"
                                     class="main-toolbar-link my-auto text-uppercase caption font-weight-bold mx-2"
                                 >Home</router-link>
@@ -104,7 +118,7 @@ export default {
 </script>
 <style lang="css">
 .serif-font {
-    font-family: "Playfair Display", serif !important;
+    /* font-family: "Playfair Display", serif !important; */
 }
 .main-toolbar-link-active {
     font-weight: bold;

@@ -3,20 +3,17 @@
         <v-row>
             <v-col cols="12">
                 <v-card tile outlined>
-                    <v-card-title class="serif-font" style="font-size:28px">{{resource.title}}</v-card-title>
-                    <v-card-subtitle class="my-1">
+                    <v-card-title class="serif-font mx-5" style="font-size:28px">{{resource.title}}</v-card-title>
+
+                    <v-card-subtitle class="my-1 mx-5">
                         <router-link
                             class="blue--text subtitle"
                             :to="`/user/${resource.user.id}`"
                         >{{resource.user.name}}</router-link>
                         <span>-</span>
-                        <router-link
-                            class="black--text text-uppercase subtitle"
-                            style="text-decoration:none"
-                            :to="`/category/${resource.category.id}`"
-                        >{{resource.category.name}}</router-link>
+                        <span class="black--text">{{resource.publishing_date}}</span>
                     </v-card-subtitle>
-                    <div class="mx-5">
+                    <v-card tile color="indigo lighten-5" flat class="mx-5">
                         <v-card-text
                             class="black--text serif-font"
                             style="font-size:16px; line-height:1.3; letter-spacing:1px;"
@@ -24,7 +21,30 @@
                         >
                             <!-- <div>Whitsunday Island, Whitsunday Islands</div> -->
                         </v-card-text>
-                    </div>
+                        <v-card-text>
+                            <p class="caption mb-0 pb-0">Category:</p>
+                            <v-chip
+                                label
+                                class="ma-1"
+                                color="white"
+                                :to="`/category/${resource.category.id}`"
+                            >
+                                <span class="black--text">{{resource.category.name}}</span>
+                            </v-chip>
+                            <p class="caption mt-2">Tags:</p>
+                            <v-chip
+                                small
+                                label
+                                class="ma-1"
+                                color="white"
+                                v-for="(tag, index) in resource.tags"
+                                :key="index"
+                                :to="`/tag/${tag.id}`"
+                            >
+                                <span class="black--text">#{{tag.name}}</span>
+                            </v-chip>
+                        </v-card-text>
+                    </v-card>
                     <v-card-text>
                         <v-img
                             class="px-1n"
@@ -41,6 +61,38 @@
                                 <!-- <div>Whitsunday Island, Whitsunday Islands</div> -->
                             </v-card-text>
                         </div>
+                        <v-divider class="mt-12 mx-12"></v-divider>
+                        <v-card-subtitle class="my-1 mx-5">
+                            <router-link
+                                class="blue--text subtitle"
+                                :to="`/user/${resource.user.id}`"
+                            >{{resource.user.name}}</router-link>
+                            <span>-</span>
+                            <span class="black--text">{{resource.publishing_date}}</span>
+                        </v-card-subtitle>
+                        <v-card-text class="mx-5">
+                            <p class="caption mb-0 pb-0">Category:</p>
+                            <v-chip
+                                label
+                                class="ma-1"
+                                color="indigo lighten-5"
+                                :to="`/category/${resource.category.id}`"
+                            >
+                                <span class="black--text">{{resource.category.name}}</span>
+                            </v-chip>
+                            <p class="caption mt-2">Tags:</p>
+                            <v-chip
+                                small
+                                label
+                                class="ma-1"
+                                color="indigo lighten-5"
+                                v-for="(tag, index) in resource.tags"
+                                :key="index"
+                                :to="`/tag/${tag.id}`"
+                            >
+                                <span class="black--text">#{{tag.name}}</span>
+                            </v-chip>
+                        </v-card-text>
                         <!-- <v-card-actions>
                                         <v-btn
                                             color="orange"
@@ -107,28 +159,24 @@
                                         <v-card-subtitle
                                             class="pl-3 pt-3 font-weight-bold black--text"
                                         >
-                                        
                                             <!-- User - 12/12/12 12:12 -->
                                             <template v-if="comment.user!=null">
-                                                    
-                                            {{comment.user.name}}
-                                            <span
-                                                class="mx-1"
-                                                v-if="comment.user.id == resource.id || comment.user.role == 'admin' "
-                                            >
+                                                {{comment.user.name}}
                                                 <span
-                                                    v-if="comment.user.id == resource.id"
-                                                    class="green--text small"
-                                                >OP</span>
-                                                <span
-                                                    v-if="comment.user.role == 'admin'"
-                                                    class="red--text small"
-                                                >Admin</span>
-                                            </span>
+                                                    class="mx-1"
+                                                    v-if="comment.user.id == resource.id || comment.user.role == 'admin' "
+                                                >
+                                                    <span
+                                                        v-if="comment.user.id == resource.id"
+                                                        class="green--text small"
+                                                    >OP</span>
+                                                    <span
+                                                        v-if="comment.user.role == 'admin'"
+                                                        class="red--text small"
+                                                    >Admin</span>
+                                                </span>
                                             </template>
-                                            <template v-else>
-                                                    User
-                                            </template>
+                                            <template v-else>User</template>
                                             <span
                                                 class="caption grey--text"
                                             >- {{comment.created_at}}</span>

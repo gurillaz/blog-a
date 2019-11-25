@@ -113,6 +113,10 @@
                 >
                     <template v-slot:item.action="{ item }">
                         <v-row>
+
+                            <v-btn tile text small v-on:click="alert('edit')">Delete</v-btn>
+                            <v-btn tile text small v-on:click="alert('edit')">Edit</v-btn>
+
                             <v-btn
                                 tile
                                 text
@@ -146,18 +150,20 @@
                     class="elevation-1"
                 >
                     <template v-slot:item.comment_body="{ item }">
-                        <span>{{item.body.substr(0,40)}}...</span>
+                        <span>{{item.body.substr(0,30)}}...</span>
                     </template>
                     <template v-slot:item.comment_type="{ item }">
                         <span v-if="item.commentable_type=='App\\Comment'">Reply</span>
                         <span v-else>Comment</span>
                     </template>
                     <template v-slot:item.article_title="{ item }">
-                        <span>{{item.article.title}}</span>
+                        <span>{{item.article.title.substr(0,30)}}...</span>
                     </template>
                     <template v-slot:item.action="{ item }">
-                        <v-row>
+                        <v-row class="text-right">
                             <v-btn tile text small v-on:click="delete_comment(item.id)">Delete</v-btn>
+                            <!-- <v-btn tile text small v-on:click="alert('edit')">Edit</v-btn> -->
+
                             <v-btn
                                 tile
                                 text

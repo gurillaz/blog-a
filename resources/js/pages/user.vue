@@ -165,10 +165,14 @@
                 <p class="pb-0 mb-0 subtitle font-weight-bold">Comments</p>
             </v-col>
             <v-col cols="12">
-                <v-data-table :headers="headers" :items="resource_relations.comments" class="elevation-1">
+                <v-data-table
+                    :headers="headers"
+                    :items="resource_relations.comments"
+                    class="elevation-1"
+                >
                     <template v-slot:item.comment_body="{ item }">
                         <span>{{item.body.substr(0,40)}}...</span>
-                    </template>         
+                    </template>
                     <template v-slot:item.comment_type="{ item }">
                         <span v-if="item.commentable_type=='App\\Comment'">Reply</span>
                         <span v-else>Comment</span>
