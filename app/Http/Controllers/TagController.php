@@ -15,7 +15,18 @@ class TagController extends Controller
      */
     public function index()
     {
-        //
+        $resources = Tag::query()
+            // ->withTrashed()
+            ->with('user:id,name')
+            ->withCount('articles')
+            ->paginate(10);
+
+        return Response::json(
+            [
+                'data' => $resources,
+            ],
+            200
+        );
     }
 
     /**

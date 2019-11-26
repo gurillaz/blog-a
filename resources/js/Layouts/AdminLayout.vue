@@ -23,7 +23,7 @@
             <v-divider></v-divider>
             <v-list nav dense>
                 <v-list-item-group color="white">
-                    <v-list-item to="/admin/home" >
+                    <v-list-item to="/admin/home">
                         <v-list-item-icon>
                             <v-icon>mdi-home</v-icon>
                         </v-list-item-icon>
@@ -32,7 +32,29 @@
                             <v-list-item-title>Home</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item to="/admin/users" >
+                    <v-divider></v-divider>
+                    <v-list-item to="/admin/pending_articles">
+                        <v-list-item-icon>
+                            <v-icon>mdi-home</v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                            <v-list-item-title>Pending Articles</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item to="/admin/pending_comments">
+                        <v-list-item-icon>
+                            <v-icon>mdi-home</v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                            <v-list-item-title>Pending Comments</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+
+                    <v-divider></v-divider>
+
+                    <v-list-item to="/admin/users">
                         <v-list-item-icon>
                             <v-icon>mdi-account-group</v-icon>
                         </v-list-item-icon>
@@ -41,7 +63,7 @@
                             <v-list-item-title>Users</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
-                    <v-list-item to="/admin/article" >
+                    <v-list-item to="/admin/articles">
                         <v-list-item-icon>
                             <v-icon>mdi-newspaper</v-icon>
                         </v-list-item-icon>
@@ -87,7 +109,7 @@
         </v-app-bar>
 
         <v-content>
-                <router-view></router-view>
+            <router-view></router-view>
         </v-content>
     </v-app>
 </template>

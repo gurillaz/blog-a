@@ -74,7 +74,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get("/article")
+            .get("/home")
             .then(function(resp) {
                 // console.log(resp.data);
 

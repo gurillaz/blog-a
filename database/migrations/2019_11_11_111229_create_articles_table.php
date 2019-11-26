@@ -22,8 +22,6 @@ class CreateArticlesTable extends Migration
             $table->longText('body');
             $table->string('image_path');
 
-
-
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('user_id');
 

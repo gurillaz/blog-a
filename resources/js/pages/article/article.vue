@@ -264,6 +264,8 @@
                                                 class="pl-3 pt-3 font-weight-bold black--text"
                                             >
                                                 <!-- User - 12/12/12 12:12 -->
+                                            <template v-if="reply.user!=null">
+
                                                 {{reply.user.name}}
                                                 <span
                                                     class="mx-1"
@@ -281,6 +283,8 @@
                                                 <span
                                                     class="caption grey--text"
                                                 >- {{reply.created_at}}</span>
+                                            </template>
+                                                     <template v-else>User</template>
                                             </v-card-subtitle>
                                             <v-card-text>
                                                 <p class="black--text">{{reply.body}}</p>
@@ -620,6 +624,7 @@ export default {
             })
             .catch(function(resp) {
                 console.log(resp);
+                // currentObj.$router.push({name:'main.error'});
             });
     }
 };

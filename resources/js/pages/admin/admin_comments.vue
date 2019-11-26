@@ -34,12 +34,13 @@
                             <span>{{item.body.substr(0,30)}}...</span>
                         </template>
                         <template v-slot:item.comment_type="{ item }">
-                            <span v-if="item.commentable_type=='App\\Comment'">Reply</span>
+                            <span v-if="item.commentable_type==`App\\Comment`">Reply</span>
                             <span v-else>Comment</span>
                         </template>
                         <template v-slot:item.article_title="{ item }">
                             <span>{{item.article.title.substr(0,30)}}...</span>
                         </template>
+                        
                         <template v-slot:item.action="{ item }">
                             <v-row class="text-right">
                                 <v-btn

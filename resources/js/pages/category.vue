@@ -75,6 +75,7 @@ export default {
             })
             .catch(function(resp) {
                 console.log(resp);
+                currentObj.$router.push({name:'main.error'});
             });
     }
 };

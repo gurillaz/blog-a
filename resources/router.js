@@ -12,6 +12,10 @@ import AdminHome from './js/pages/admin/admin_home.vue';
 import AdminUsers from './js/pages/admin/admin_users.vue';
 import AdminCategories from './js/pages/admin/admin_categories.vue';
 import AdminComments from './js/pages/admin/admin_comments.vue';
+import AdminArticles from './js/pages/admin/admin_articles.vue';
+import AdminTags from './js/pages/admin/admin_tags.vue';
+import AdminPendingArticles from './js/pages/admin/admin_articles_pending.vue';
+import AdminPendingComments from './js/pages/admin/admin_comments_pending.vue';
 
 
 
@@ -33,7 +37,6 @@ import User from './js/pages/user.vue';
 
 
 import Article from './js/pages/article/article.vue';
-import Articles from './js/pages/article/article_all.vue';
 import ArticleNew from './js/pages/article/article_new.vue';
 import ArticleEdit from './js/pages/article_edit.vue';
 
@@ -43,61 +46,18 @@ Vue.use(VueRouter);
 const router = new VueRouter({
     mode: 'history',
     routes: [
-        {
-            path: '/admin', component: AdminLayout,
-            meta: {
 
-                auth: { roles:'admin', redirect: '/login' },
-            },
-
-            children: [
-                {
-                    path: '/',
-                    name: 'article.base',
-
-                    beforeEnter: (to, from, next) => {
-                        next('/admin/home')
-                    },
-                },
-                {
-                    path: 'home',
-                    name: 'admin.home',
-                    component: AdminHome,
-                }, {
-                    path: 'users',
-                    name: 'admin.users',
-                    component: AdminUsers,
-                }, {
-                    path: 'categories',
-                    name: 'admin.categories',
-                    component: AdminCategories,
-
-                }, {
-                    path: 'comments',
-                    name: 'admin.comments',
-                    component: AdminComments,
-                },
-            ]
-        },
+        //Non auth routes
         {
             path: '/', component: ClientLayout,
             children: [
+
                 {
                     path: '/',
                     name: 'home',
                     component: Home,
-                }, {
-                    path: 'profile',
-                    name: 'profile',
-                    component: Profile,
                 },
-                {
-                    path: 'tag/:id',
-                    name: 'tag',
-                    component: Tag,
 
-                    props: true
-                },
                 {
                     path: 'user/:id',
                     name: 'user',
@@ -111,67 +71,76 @@ const router = new VueRouter({
                     component: Search,
 
                 },
-            ]
-        },
-        {
-            path: '/category', component: ClientLayout,
-            children: [
+
                 {
-                    path: ':id',
+                    path: 'category/:id',
                     name: 'category.category',
                     component: Category,
 
                     props: true
                 },
+                {
+                    path: 'tag/:id',
+                    name: 'tag',
+                    component: Tag,
+
+                    props: true
+                },
+                //Auth routes
+                {
+                    path: 'profile',
+                    name: 'profile',
+                    component: Profile,
+                    meta: {
+
+                        auth: true,
+                    },
+                },
+
+
             ]
         },
         {
             path: '/article', component: ClientLayout,
             children: [
-                {
-                    path: '/',
-                    name: 'article.base',
 
-                    beforeEnter: (to, from, next) => {
-                        next('/article/all')
-                    }
-                },
-                {
-                    path: 'all',
-                    name: 'article.all',
-                    component: Articles,
-                    // beforeEnter: requireAuth
-                },
+
                 {
                     path: 'new',
                     name: 'article.new',
 
-                    component: ArticleNew
+                    component: ArticleNew,
+                    meta: {
+
+                        auth: true,
+                    },
                 },
+
                 {
                     path: ':slug',
                     name: 'article.article',
                     component: Article,
+                    // meta: {
 
+                    //     auth: false,
+                    // },
                     props: true
-                }, {
+
+                },
+                {
                     path: ':id/edit',
                     name: 'article.edit',
                     component: ArticleEdit,
+                    meta: {
+
+                        auth: true,
+                    },
 
                     props: true
                 },
             ]
         },
-
-        // {
-        //     path: '/article/:slug',
-        //     name: 'article',
-        //     component: Article,
-        //     props: true
-
-        // },
-
+        // User registration and authentication routes
         {
             path: '/register',
             name: 'register',
@@ -204,6 +173,68 @@ const router = new VueRouter({
             meta: {
                 auth: false
             }
+        },
+
+
+
+
+
+
+
+        //Admin routes
+        {
+            path: '/admin', component: AdminLayout,
+            meta: {
+
+                auth: { roles: 'admin', redirect: '/login' },
+            },
+
+            children: [
+                {
+                    path: '/',
+                    name: 'home.base',
+
+                    beforeEnter: (to, from, next) => {
+                        next('/admin/home')
+                    },
+                },
+                {
+                    path: 'home',
+                    name: 'admin.home',
+                    component: AdminHome,
+                }, {
+                    path: 'users',
+                    name: 'admin.users',
+                    component: AdminUsers,
+                }, {
+                    path: 'categories',
+                    name: 'admin.categories',
+                    component: AdminCategories,
+
+                }, {
+                    path: 'comments',
+                    name: 'admin.comments',
+                    component: AdminComments,
+                }, 
+                {
+                    path: 'articles',
+                    name: 'admin.articles',
+                    component: AdminArticles,
+                },
+                 {
+                    path: 'tags',
+                    name: 'admin.tags',
+                    component: AdminTags,
+                }, {
+                    path: 'pending_articles',
+                    name: 'admin.articles_pending',
+                    component: AdminPendingArticles,
+                },{
+                    path: 'pending_comments',
+                    name: 'admin.comments_pending',
+                    component: AdminPendingComments,
+                },
+            ]
         },
 
 

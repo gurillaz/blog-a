@@ -19,29 +19,44 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::get('search/data_autofill', 'SearchController@data_autofill');
+Route::get('search', 'SearchController@get_results');
+Route::get('home', 'WebClientController@home');
+Route::get('admin_home', 'WebClientController@admin_home');
+
+Route::get('pending_articles', 'WebClientController@pending_articles');
+Route::post('approve_article/{article}', 'WebClientController@approve_article');
+Route::post('deny_article/{article}', 'WebClientController@deny_article');
+Route::post('aprove_all_articles', 'WebClientController@aprove_all_articles');
+
+Route::get('pending_comments', 'WebClientController@pending_comments');
+Route::post('approve_comment/{comment}', 'WebClientController@approve_comment');
+Route::post('deny_comment/{comment}', 'WebClientController@deny_comment');
+Route::post('aprove_all_comments', 'WebClientController@aprove_all_comments');
 
 Route::get('article/slug/{slug}', 'ArticleController@show_slug');
+
 Route::resource('article', 'ArticleController');
 Route::resource('user', 'UserController');
 Route::resource('category', 'CategoryController');
 Route::resource('comment', 'CommentController');
 Route::resource('tag', 'TagController');
-Route::get('search/data_autofill', 'SearchController@data_autofill');
-Route::get('search', 'SearchController@get_results');
 
-Route::group(['middleware' => 'auth'], function () {
-    Route::get('auth_user', 'UserController@auth_user');
-});
+
+Route::get('auth_user', 'UserController@auth_user');
+Route::put('edit/{user}', 'AuthController@update');
+Route::post('toggle_bookmark', 'AuthController@toggle_bookmark');
 
 Route::prefix('auth')->group(function () {
     Route::post('register', 'AuthController@register');
     Route::post('login', 'AuthController@login');
     Route::get('refresh', 'AuthController@refresh');
+
+
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('user', 'AuthController@user');
-        Route::put('edit/{user}', 'AuthController@update');
+
         Route::post('logout', 'AuthController@logout');
-        Route::post('toggle_bookmark', 'AuthController@toggle_bookmark');
     });
     //Auth related data
 
@@ -50,12 +65,3 @@ Route::prefix('auth')->group(function () {
     // handle reset password form process
     Route::post('reset/password/{token}', 'AuthController@callResetPassword');
 });
-
-
-
-
-// Route::group(['middleware' => 'auth:api'], function(){
-//     // Users
-//     Route::get('users', 'UserController@index')->middleware('isAdmin');
-//     Route::get('users/{id}', 'UserController@show')->middleware('isAdminOrSelf');
-// });

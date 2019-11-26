@@ -25,51 +25,19 @@ class ArticleController extends Controller
      */
     public function index()
     {
+        $resources = Article::query()
+        // ->withTrashed()
+        ->with('user:id,name')
+        ->with('category:id,name')
+        ->withCount('comments')
+        ->paginate(10);
+        return response()->json(
+            [
+                'data' => $resources,
+            ],
+            200
+        );
 
-        $latest_featured = Article::select(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
-
-            ->where('meta_is-feature', 'true')
-            ->where('meta_status', 'published')
-            ->with(['category:id,name', 'user:id,name'])
-            ->withCount('comments')
-            ->orderBy('publishing_date', 'desc')->take(1)
-            ->get();
-
-        $others_featured = Article::select(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
-
-            ->where('id', '!=', $latest_featured[0]->id)
-            ->where('meta_is-feature', 'true')
-            ->where('meta_status', 'published')
-            ->with(['category:id,name', 'user:id,name'])
-            ->withCount('comments')
-
-            ->orderBy('publishing_date', 'desc')->take(3)
-            ->get();
-
-
-        $latest = Article::select(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
-            ->where('meta_status', 'published')
-            ->with(['category:id,name', 'user:id,name'])
-            ->withCount('comments')
-            ->orderBy('publishing_date', 'desc')->take(10)
-            ->get();
-        $categories = Category::select(['id', 'name'])->withCount('articles')->orderBy('articles_count', 'desc')->take(12)
-            ->get();
-
-
-        // $latest = Article::where('met')orderBy('publishing_date','desc')->take('10')->get();
-
-        $resources = [];
-        $resources['latest_featured'] = $latest_featured;
-        $resources['others_featured'] = $others_featured;
-        $resources['latest'] = $latest;
-        $resources['categories'] = $categories;
-
-
-
-        return Response::json([
-            'resources' => $resources
-        ], 200);
     }
 
     /**
@@ -158,7 +126,28 @@ class ArticleController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Article $article)
-    { }
+    { 
+
+
+        $this->authorize('view', $article);
+
+        $resource = [];
+
+
+
+        $resource = $article;
+        $resource['user'] = $article->user()->get(['id', 'name']);
+        $resource['category'] = $article->category()->first(['id', 'name']);
+
+        $resource['tags'] = $article->tags()->get(['id', 'name']);
+
+
+        return Response::json([
+            'resource' => $resource,
+        ], 200);
+
+
+    }
     /**
      * Display the specified resource.
      *

@@ -77,7 +77,8 @@ export default {
                 currentObj.resource_relations = resp.data.resource_relations;
             })
             .catch(function(resp) {
-                console.log(resp);
+                            console.log(resp);
+                currentObj.$router.push({name:'main.error'});
             });
     }
 };
