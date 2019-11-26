@@ -14,11 +14,11 @@ class UserController extends Controller
     //
     public function index()
     {
-        $users = User::all();
+
+        $users = User::query()->withCount('comments')->withCount('articles')->paginate(10);
         return response()->json(
             [
-                'status' => 'success',
-                'users' => $users->toArray()
+                'data' => $users,
             ],
             200
         );
@@ -124,6 +124,24 @@ class UserController extends Controller
         return Response::json([
             'resource' => $resource,
             'resource_relations' => $resource_relations,
+        ], 200);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\User  $user
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy(User $user)
+    {
+        $this->authorize('delete', $user);
+
+        
+
+
+        return Response::json([
+            'msg' => 'OKAY'
         ], 200);
     }
 }

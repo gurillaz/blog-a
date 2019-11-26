@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Article;
 use App\Category;
 use App\Http\Requests\CreateArticleRequest;
+use App\Http\Requests\UpdateArticleRequest;
 use App\Tag;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
@@ -172,24 +173,23 @@ class ArticleController extends Controller
                 'msg' => "Resource not found"
             ], 404);
         }
-        $this->authorize('view',$article);
-        
+        $this->authorize('view', $article);
+
         $resource = [];
-        $resource_relations = [];
-        $data_autofill = [];
+
 
 
         $resource = $article;
-        $resource_relations['user'] = $article->user->only(['id', 'name']);
-        $resource_relations['comments'] = $article->comments()->with("user:id,name,role")->with('replies.user')->get();
-        $resource_relations['category'] = $article->category;
-        $resource_relations['tags'] = $article->tags;
+        $resource['user'] = $article->user()->get(['id', 'name']);
+        $resource['category'] = $article->category()->first(['id', 'name']);
+
+        $resource['comments'] = $article->comments()->with("user:id,name,role")->with('replies.user')->get();
+
+        $resource['tags'] = $article->tags()->get(['id', 'name']);
 
 
         return Response::json([
             'resource' => $resource,
-            'resource_relations' => $resource_relations,
-            'data_autofill' => $data_autofill
         ], 200);
 
         // $article = Article::where('slug',$slug);
@@ -203,7 +203,29 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        //
+        // $this->authorize('edit', $article);
+
+        $resource = [];
+        $resource_relations = [];
+        $data_autofill = [];
+
+
+        $resource = $article;
+        $resource['tags'] = $article->tags()->pluck('id');
+
+        $resource_relations['user'] = $article->user->only(['id', 'name']);
+        $resource_relations['category'] = $article->category;
+
+
+        $data_autofill['tags'] = Tag::all('id', 'name');
+        $data_autofill['categories'] = Category::all('id', 'name');
+
+
+        return Response::json([
+            'resource' => $resource,
+            'resource_relations' => $resource_relations,
+            'data_autofill' => $data_autofill
+        ], 200);
     }
 
     /**
@@ -213,9 +235,54 @@ class ArticleController extends Controller
      * @param  \App\Article  $article
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Article $article)
+    public function update(UpdateArticleRequest $request, Article $article)
     {
-        //
+
+        $validated = $request->validated();
+
+
+
+        $article->title = $validated['title'];
+        $article->slug = Str::slug($article->title . ' ' . Auth::user()->name . ' ', '-');
+        $article->body = $validated['body'];
+        $article->summary = $validated['summary'];
+        $article->publishing_date = Carbon::now();
+        $article->category_id = $validated['category_id'];
+        $article->meta_status = 'published';
+        $article->user_id = Auth::id();
+
+        if (isset($validated['image'])) {
+
+            // Thumbnail
+            $thumbnail = Image::Make($validated['image'])
+                ->resize(200, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })
+                ->save(storage_path('app') . "\\public\\images\\" . Str::slug($article->title . ' ' . Auth::user()->name . ' ', '-') . "_thumbnail.png");
+
+            $image = Image::make($validated['image']);
+            $watermark_mask = Image::make(file_get_contents(public_path() . '\\watermark_mask.png'));
+
+            $image->insert($watermark_mask, "center")
+                ->resize(800, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                })
+                ->save(storage_path('app') . "\\public\\images\\" . Str::slug($article->title . ' ' . Auth::user()->name . ' ', '-') . ".jpg");
+
+
+            $article->image_path = Str::slug($article->title . ' ' . Auth::user()->name . ' ', '-') . ".jpg";
+        }
+
+        $article->save();
+
+        //Savin tags
+        if (isset($validated['tags'])) {
+            $article->tags()->sync($validated['tags']);
+        }
+        return Response::json([
+            'resource_slug' => $article->slug,
+            'msg' => "Article updated.",
+        ], 200);
     }
 
     /**

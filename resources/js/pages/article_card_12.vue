@@ -51,12 +51,18 @@
                                 <v-icon color="black">mdi-comment-outline</v-icon>
                                 <span class="caption mb-3">{{article.comments_count}}</span>
                             </span>
+                        <template v-if="$auth.check()==false">
+                            <v-btn depressed color="white" fab class="mr-0 mb-1" to="/login">
+                                <v-icon color="grey">mdi-bookmark-outline</v-icon>
+                            </v-btn>
+                        </template>
+                        <template v-else>
                             <v-btn
                                 depressed
-                                small
+                                
                                 color="white"
                                 fab
-                                class="mr-2 mb-2"
+                               class="mr-2 mb-1"
                                 v-if="$auth.user().bookmarks.includes(article.id)"
                                 v-on:click="toggle_bookmark(article.id)"
                             >
@@ -64,15 +70,16 @@
                             </v-btn>
                             <v-btn
                                 depressed
-                                small
+                                
                                 color="white"
                                 fab
-                                class="mr-2 mb-2"
+                               class="mr-2 mb-1"
                                 v-else
                                 v-on:click="toggle_bookmark(article.id)"
                             >
                                 <v-icon>mdi-bookmark-outline</v-icon>
                             </v-btn>
+                        </template>
                         </v-card-actions>
                     </v-row>
                 </v-col>

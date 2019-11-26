@@ -129,7 +129,23 @@
                                     >Comments</p>
                                 </v-col>
                             </v-row>
-                            <v-row>
+                            <v-row v-if="$auth.check()==false">
+                                <v-col cols="12" class="pb-0 mb-0">
+                                    <v-card tile outlined class="mb-6 py-5">
+                                        <v-card-text class="text-center">
+                                            <router-link class="font-weight-bold" to="/login">Login</router-link>
+                                            <span class="font-weight-bold">or</span>
+                                            <router-link
+                                                class="font-weight-bold"
+                                                to="/register"
+                                            >Register</router-link>
+                                            <span class="font-weight-bold">to add comment.</span>
+                                            <!-- <v-btn text small color="orange"></v-btn> -->
+                                        </v-card-text>
+                                    </v-card>
+                                </v-col>
+                            </v-row>
+                            <v-row v-else>
                                 <v-col cols="11" class="pb-0 mb-0">
                                     <v-textarea
                                         v-model="new_comment.body"
@@ -196,14 +212,16 @@
                                                 text
                                                 small
                                                 class="mr-1"
-                                                :disabled="!(comment.user_id == $auth.user().id || $auth.user().role == 'admin') "
+                                                :disabled="!(comment.user_id == $auth.user().id || $auth.user().role == 'admin') || comment.user == null "
+
+
                                                 v-on:click="delete_comment(comment.id)"
                                             >Delete</v-btn>
                                             <v-btn
                                                 text
                                                 small
                                                 class="mr-1"
-                                                :disabled="!(comment.user_id == $auth.user().id || $auth.user().role == 'admin') "
+                                                :disabled="!(comment.user_id == $auth.user().id || $auth.user().role == 'admin') || comment.user == null "
                                                 v-on:click="show_edit_comment_dialog(comment)"
                                             >Edit</v-btn>
                                         </v-card-actions>
@@ -272,14 +290,16 @@
                                                     text
                                                     small
                                                     class="ml-auto"
-                                                    :disabled="!(reply.user_id == $auth.user().id || $auth.user().role == 'admin') "
+                                                :disabled="!(reply.user_id == $auth.user().id || $auth.user().role == 'admin') || reply.user == null "
+
                                                     v-on:click="delete_reply(comment.id,reply.id)"
                                                 >Delete</v-btn>
                                                 <v-btn
                                                     text
                                                     small
                                                     class="mr-1"
-                                                    :disabled="!(reply.user_id == $auth.user().id || $auth.user().role == 'admin') "
+                                                :disabled="!(reply.user_id == $auth.user().id || $auth.user().role == 'admin') || reply.user == null "
+
                                                     v-on:click="show_edit_reply_dialog(reply,comment.id)"
                                                 >Edit</v-btn>
                                             </v-card-actions>
@@ -361,14 +381,39 @@ export default {
                 commentable_type: ""
             },
 
+            // resource: [],
+
             resource: {
-                name: ""
-            },
-            resource_relations: {
+                id: "",
+                slug: "",
+                title: "",
+                summary: "",
+                body: "",
+                image_path: "",
+                category_id: "",
+                user_id: "",
+                publishing_date: "",
+                claps: "",
+                meta_status: "",
+                "meta_is-feature": null,
+                "meta_open-new-window": null,
+                meta_list_place: null,
+                deleted_at: null,
+                created_at: "",
+                updated_at: "",
+                user: [
+                    {
+                        id: "",
+                        name: ""
+                    }
+                ],
+                category: {
+                    id: "",
+                    name: ""
+                },
                 comments: [],
-                user: []
+                tags: []
             },
-            data_autofill: [],
 
             edit_comment_dialog: false,
             edit_replay_dialog: false,
@@ -381,7 +426,7 @@ export default {
     },
     computed: {
         sorted_comments() {
-            return this.resource_relations.comments.sort(function(a, b) {
+            return this.resource.comments.sort(function(a, b) {
                 let a_date = Date.parse(a.created_at);
                 let b_date = Date.parse(b.created_at);
                 return b_date - a_date;
@@ -404,7 +449,7 @@ export default {
                     currentObj.edit_comment
                 )
                 .then(function(resp) {
-                    currentObj.resource_relations.comments.filter(
+                    currentObj.resource.comments.filter(
                         comment => comment.id == currentObj.edit_comment.id
                     )[0].body = currentObj.edit_comment.body;
 
@@ -434,7 +479,7 @@ export default {
                     currentObj.edit_comment
                 )
                 .then(function(resp) {
-                    currentObj.resource_relations.comments
+                    currentObj.resource.comments
                         .filter(
                             comment =>
                                 comment.id ==
@@ -469,9 +514,7 @@ export default {
                     // currentObj.saving_errors = false;
 
                     // console.log(resp.data.comment);
-                    currentObj.resource_relations.comments.push(
-                        resp.data.comment
-                    );
+                    currentObj.resource.comments.push(resp.data.comment);
                     currentObj.new_comment = {
                         body: "",
                         commentable_id: "",
@@ -503,7 +546,7 @@ export default {
                     // currentObj.saving_errors = false;
                     // console.log(resp.data.comment)
                     // console.log(resp.data.comment);
-                    currentObj.resource_relations.comments
+                    currentObj.resource.comments
                         .filter(comm => comm.id == parent_comment_id)[0]
                         .replies.unshift(resp.data.comment);
                     currentObj.new_reply = {
@@ -531,11 +574,11 @@ export default {
                 method: "delete"
             })
                 .then(function(resp) {
-                    currentObj.resource_relations.comments.filter(
-                        comment => comment.id == parent_comment_id
-                    )[0].replies = currentObj.resource_relations.comments
+                    let comment = currentObj.resource.comments
                         .filter(comment => comment.id == parent_comment_id)[0]
-                        .replies.filter(rep => rep.id != reply_id);
+                        .replies.filter(rep => rep.id == reply_id);
+                    comment.user = null;
+                    comment.body = "[Deleted]";
                 })
                 .catch(function(resp) {
                     console.log(resp);
@@ -550,9 +593,11 @@ export default {
                 method: "delete"
             })
                 .then(function(resp) {
-                    currentObj.resource_relations.comments = currentObj.resource_relations.comments.filter(
-                        comment => comment.id != deleted_comment_id
-                    );
+                    let comment = currentObj.resource.comments.filter(
+                        comment => comment.id == deleted_comment_id
+                    )[0];
+                    comment.user = null;
+                    comment.body = "[Deleted]";
                 })
                 .catch(function(resp) {
                     console.log(resp);
@@ -568,8 +613,6 @@ export default {
                 // console.log(resp.data);
 
                 currentObj.resource = resp.data.resource;
-                currentObj.resource_relations = resp.data.resource_relations;
-                currentObj.data_autofill = resp.data.data_autofill;
 
                 // currentObj.belongs_to = resp.data.belongs_to;
                 // currentObj.created_by = resp.data.created_by;

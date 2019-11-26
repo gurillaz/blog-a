@@ -8,6 +8,7 @@ import router from '@websanova/vue-auth/drivers/router/vue-router.2.x';
 const config = {
     auth: bearer,
     http: axios,
+    rolesVar: 'role',
     router: router,
     tokenDefaultName: 'laravel-jwt-auth',
     tokenStorage: ['localStorage'],

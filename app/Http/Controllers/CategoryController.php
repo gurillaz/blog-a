@@ -15,7 +15,13 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $resources = Category::query()->with('user:id,name')->withCount('articles')->paginate(10);
+        return response()->json(
+            [
+                'data' => $resources,
+            ],
+            200
+        );
     }
 
     /**

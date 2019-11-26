@@ -3,7 +3,7 @@
         <v-container class="fill-height" fluid>
             <v-row align="center" justify="center">
                 <v-col cols="5">
-                    <v-card outlined class="mb-6">
+                    <v-card tile outlined class="mb-6">
                         <v-card-text>
                             <span
                                 class="text-uppercase font-weight-bold"
@@ -12,7 +12,7 @@
                             <!-- <v-btn text small color="orange"></v-btn> -->
                         </v-card-text>
                     </v-card>
-                    <v-card class="elevation-12">
+                    <v-card tile class="elevation-12">
                         <v-toolbar :color="has_error?'red':'indigo'" dark flat>
                             <v-toolbar-title>Register</v-toolbar-title>
                         </v-toolbar>
@@ -56,6 +56,7 @@
                         <v-card-actions class="pa-5">
                             <div class="flex-grow-1"></div>
                             <v-btn
+                                tile
                                 :color="has_error?'red':'indigo'"
                                 @click="register"
                                 block

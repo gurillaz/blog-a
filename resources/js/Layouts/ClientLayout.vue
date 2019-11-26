@@ -41,7 +41,7 @@
                         <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer" /> -->
                     </v-col>
                 </v-row>
-                <v-row class="py-0 mt-0" v-if="$auth.check()">
+                <v-row class="py-0 mt-0">
                     <v-col cols="12" class="py-0 mt-0 px-0">
                         <v-toolbar
                             flat
@@ -56,6 +56,11 @@
                             <v-spacer></v-spacer>
 
                             <v-toolbar-items>
+                                               <router-link
+                                    v-if="$auth.user().role == 'admin'"
+                                    to="/admin/home"
+                                    class="main-toolbar-link my-auto text-uppercase caption font-weight-bold mx-2 red--text"
+                                >Admin dashboard</router-link>
                                 <router-link
                                     to="/search"
                                     class="main-toolbar-link my-auto text-uppercase caption font-weight-bold mx-2"
@@ -65,10 +70,12 @@
                                     class="main-toolbar-link my-auto text-uppercase caption font-weight-bold mx-2"
                                 >Home</router-link>
                                 <router-link
+                                    v-if="$auth.check()==true"
                                     to="/profile"
                                     class="main-toolbar-link my-auto text-uppercase caption font-weight-bold mx-2"
                                 >Profile</router-link>
                                 <router-link
+                                    v-if="$auth.check()==true"
                                     to="/article/new"
                                     class="main-toolbar-link my-auto text-uppercase caption font-weight-bold mx-2"
                                 >Add new article</router-link>

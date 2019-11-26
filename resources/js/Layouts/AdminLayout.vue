@@ -1,51 +1,103 @@
 <template>
     <v-app>
-        <v-app-bar app absolute color="transparent" flat>
-            <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer" /> -->
-            <v-container>
-                <v-row class="d-flex justify-content-between px-5">
-                    <v-toolbar-title>
-                        <v-btn text icon large color="orange" class="mb-1">
+        <v-navigation-drawer app color dark v-model="drawer">
+            <v-list>
+                <v-list-item class="mb-12">
+                    <v-list-item-content class="text-center">
+                        <h1 class="title">Blog-a</h1>
+                        <v-list-item-subtitle>Admin dashbard</v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>
+
+                <v-list-item link>
+                    <v-list-item-content>
+                        <v-list-item-title class="title">{{$auth.user().name}}</v-list-item-title>
+                        <v-list-item-subtitle>{{$auth.user().email}}</v-list-item-subtitle>
+                    </v-list-item-content>
+
+                    <v-list-item-action>
+                        <v-icon>mdi-menu-down</v-icon>
+                    </v-list-item-action>
+                </v-list-item>
+            </v-list>
+            <v-divider></v-divider>
+            <v-list nav dense>
+                <v-list-item-group color="white">
+                    <v-list-item to="/admin/home" >
+                        <v-list-item-icon>
+                            <v-icon>mdi-home</v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                            <v-list-item-title>Home</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item to="/admin/users" >
+                        <v-list-item-icon>
+                            <v-icon>mdi-account-group</v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                            <v-list-item-title>Users</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item to="/admin/article" >
+                        <v-list-item-icon>
                             <v-icon>mdi-newspaper</v-icon>
-                        </v-btn>
-                        Blog-a
+                        </v-list-item-icon>
 
-                    </v-toolbar-title>
+                        <v-list-item-content>
+                            <v-list-item-title>Articles</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item to="/admin/categories">
+                        <v-list-item-icon>
+                            <v-icon>mdi-note-text-outline</v-icon>
+                        </v-list-item-icon>
 
-                    <v-spacer></v-spacer>
-                    <!-- <v-btn text small color="primary" to="/login">Login</v-btn> -->
-                    <v-menu offset-y>
-                        <template v-slot:activator="{ on }">
-                            <v-btn color="black" text dark v-on="on">{{$auth.user().name}}</v-btn>
-                        </template>
-                        <v-list>
-                            <v-list-item>
-                                <v-list-item-title>Log out</v-list-item-title>
-                            </v-list-item>
-                        </v-list>
-                    </v-menu>
-                </v-row>
-            </v-container>
+                        <v-list-item-content>
+                            <v-list-item-title>Categories</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item to="/admin/comments">
+                        <v-list-item-icon>
+                            <v-icon>mdi-comment-multiple</v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                            <v-list-item-title>Comments</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item to="/admin/tags">
+                        <v-list-item-icon>
+                            <v-icon>mdi-tag-multiple</v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                            <v-list-item-title>Tags</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list-item-group>
+            </v-list>
+        </v-navigation-drawer>
+
+        <v-app-bar app color="transparent" flat>
+            <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+            <!-- <v-toolbar-title>Admin Dashboard</v-toolbar-title> -->
         </v-app-bar>
+
         <v-content>
-            <v-container>
                 <router-view></router-view>
-            </v-container>
         </v-content>
     </v-app>
 </template>
 
 <script>
-import Menu from "./components/Menu.vue";
-
 export default {
     data() {
         return {
-            //
+            drawer: true
         };
-    },
-    components: {
-        Menu
     }
 };
 </script>

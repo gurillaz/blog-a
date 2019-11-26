@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Article;
+use App\Comment;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -22,19 +22,19 @@ class CommentPolicy
     }
 
     /**
-     * Determine whether the user can view the article.
+     * Determine whether the user can view the Comment.
      *
      * @param  \App\User  $user
-     * @param  \App\Article  $article
+     * @param  \App\Comment  $comment
      * @return mixed
      */
-    public function view(User $user, Article $article)
+    public function view(User $user, Comment $comment)
     {
         //
     }
 
     /**
-     * Determine whether the user can create articles.
+     * Determine whether the user can create comments.
      *
      * @param  \App\User  $user
      * @return mixed
@@ -45,51 +45,51 @@ class CommentPolicy
     }
 
     /**
-     * Determine whether the user can update the article.
+     * Determine whether the user can update the Comment.
      *
      * @param  \App\User  $user
-     * @param  \App\Article  $article
+     * @param  \App\Comment  $comment
      * @return mixed
      */
-    public function update(User $user, Article $article)
+    public function update(User $user, Comment $comment)
     {
         //
     }
 
     /**
-     * Determine whether the user can delete the article.
+     * Determine whether the user can delete the Comment.
      *
      * @param  \App\User  $user
-     * @param  \App\Article  $article
+     * @param  \App\Comment  $comment
      * @return mixed
      */
-    public function delete(User $user, Article $article)
+    public function delete(User $user, Comment $comment)
     {
-        return $user->role == 'admin' || $user->id == $article->user_id;
+        return $user->role == 'admin' || $user->id == $comment->user_id;
         
     }
 
     /**
-     * Determine whether the user can restore the article.
+     * Determine whether the user can restore the Comment.
      *
      * @param  \App\User  $user
-     * @param  \App\Article  $article
+     * @param  \App\Comment  $comment
      * @return mixed
      */
-    public function restore(User $user, Article $article)
+    public function restore(User $user, Comment $comment)
     {
         return $user->role == 'admin';
         
     }
 
     /**
-     * Determine whether the user can permanently delete the article.
+     * Determine whether the user can permanently delete the Comment.
      *
      * @param  \App\User  $user
-     * @param  \App\Article  $article
+     * @param  \App\Comment  $comment
      * @return mixed
      */
-    public function forceDelete(User $user, Article $article)
+    public function forceDelete(User $user, Comment $comment)
     {
         return $user->role == 'admin';
         

@@ -3,7 +3,7 @@
         <v-container class="fill-height" fluid>
             <v-row align="center" justify="center">
                 <v-col cols="5">
-                    <v-card outlined class="mb-6">
+                    <v-card outlined class="mb-6" tile>
                         <v-card-text>
                             <span
                                 class="text-uppercase font-weight-bold"
@@ -15,12 +15,12 @@
                             <!-- <v-btn text small color="orange"></v-btn> -->
                         </v-card-text>
                     </v-card>
-                    <v-card class="elevation-12">
+                    <v-card class="elevation-12" tile>
                         <v-toolbar :color="has_error?'red':'indigo'" dark flat>
                             <v-toolbar-title>Login</v-toolbar-title>
                         </v-toolbar>
 
-                        <v-card-text class="px-5">
+                        <v-card-text class="pt-5 pb-0">
                             <v-text-field
                                 class="mt-5"
                                 label="Email:"
@@ -42,10 +42,22 @@
                                 :error="has_error"
                                 :error-messages="error"
                             ></v-text-field>
-                            <v-btn text small color="orange" to="/reset-password">Forgot password?</v-btn>
+                        </v-card-text>
+                        <v-card-text class="mt-3 pt-0">
+                            <v-row class="mx-1">
+
+                            <v-checkbox
+                            class="mt-0 pt-0"
+                                v-model="remember"
+                                label="Remember me"
+                                color="blue"
+                                hide-details
+                            ></v-checkbox>
+                            <v-btn class="ml-auto" text small color="orange" to="/reset-password">Forgot password?</v-btn>
+                            </v-row>
                         </v-card-text>
                         <v-card-actions class="pa-5">
-                            <v-btn :color="has_error?'red':'indigo'" @click="login" block dark>Login</v-btn>
+                            <v-btn tile :color="has_error?'red':'indigo'" @click="login" block dark>Login</v-btn>
                         </v-card-actions>
                     </v-card>
                 </v-col>
@@ -60,6 +72,7 @@ export default {
         return {
             email: null,
             password: null,
+            remember: false,
             has_error: false,
             error: "",
             success: false
@@ -81,7 +94,7 @@ export default {
                     app.has_error = true;
                     app.error = resp.response.data.msg;
                 },
-                rememberMe: true,
+                rememberMe: this.remember,
                 redirect: "/",
                 fetchUser: true
             });

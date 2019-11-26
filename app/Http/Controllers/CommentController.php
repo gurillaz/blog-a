@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Article;
 use App\Comment;
 use App\Http\Requests\CreateCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
@@ -25,7 +26,31 @@ class CommentController extends Controller
      */
     public function index()
     {
-        //
+        $comments = Comment::query()
+            ->withTrashed()
+            ->with('user:id,name')
+
+            ->paginate(10);
+
+            //https://laravel.com/docs/5.4/collections#method-transform
+            //https://gist.github.com/Repox/7784159810681db92b87ca44d5a9464d
+            $comments->getCollection()->transform(function($comment){
+                if ($comment->commentable_type == Comment::class) {
+                    // $comment['article'] = $comment->commentable()->first('commentable_id')['commentable_id'];
+                    $comment['article'] = Article::where('id', $comment->commentable()->first('commentable_id')['commentable_id'])->first(['id', 'slug', 'title']);
+                } else {
+                    $comment['article'] = $comment->commentable()->first(['id', 'slug', 'title']);
+                }
+                return $comment;
+            });
+            
+
+        return response()->json(
+            [
+                'data' => $comments,
+            ],
+            200
+        );
     }
 
     /**
@@ -116,7 +141,6 @@ class CommentController extends Controller
             'comment' => $comment,
             'message' => "Comment updated!"
         ], 200);
-
     }
 
     /**
@@ -127,15 +151,14 @@ class CommentController extends Controller
      */
     public function destroy(Comment $comment)
     {
-        $this->authorize('delete', $comment);      
+        $this->authorize('delete', $comment);
 
-  
+
         $comment->user_id = NULL;
         $comment->body = "[deleted]";
         $comment->save();
         return Response::json([
             'message' => "Comment deleted!"
         ], 200);
-    
     }
 }
