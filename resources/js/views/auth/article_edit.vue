@@ -224,7 +224,7 @@ export default {
             );
 
             axios
-                .post(`/article/${currentObj.id}`, formdata, {
+                .post(`/auth/article/${currentObj.id}`, formdata, {
                     headers: {
                         "content-type": "multipart/form-data"
                     }
@@ -276,7 +276,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get(`/article/${currentObj.id}/edit`)
+            .get(`/auth/article/${currentObj.id}/edit`)
             .then(function(resp) {
                 currentObj.edit_resource = resp.data.resource;
                 currentObj.data_autofill = resp.data.data_autofill;

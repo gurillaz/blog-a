@@ -38,7 +38,8 @@ Vue.use(VueAuth, auth);
 import { TiptapVuetifyPlugin } from 'tiptap-vuetify'
 import 'tiptap-vuetify/dist/main.css'
 
-Vue.use(TiptapVuetifyPlugin, {
+Vue.use(TiptapVuetifyPlugin, 
+  {
     vuetify, // same as "vuetify: vuetify"
     iconsGroup: 'md'
   })

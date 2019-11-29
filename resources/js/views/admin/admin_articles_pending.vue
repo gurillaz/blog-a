@@ -368,7 +368,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get("/pending_articles")
+            .get("/admin/pending_articles")
             .then(function(resp) {
                 currentObj.resources = resp.data.resources;
 

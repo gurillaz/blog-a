@@ -38,7 +38,8 @@
                             <span v-else>Comment</span>
                         </template>
                         <template v-slot:item.article_title="{ item }">
-                            <span>{{item.article.title.substr(0,30)}}...</span>
+                            <span v-if="item.article != null">{{item.article.title.substr(0,30)}}...</span>
+                            <span v-else>[Deleted]</span>
                         </template>
 
                         <template v-slot:item.action="{ item }">
@@ -87,7 +88,6 @@
                 </v-card>
             </v-dialog>
         </v-row>
-        
     </v-container>
 </template>
 
@@ -129,7 +129,7 @@ export default {
         show_resource_view(resource_id) {
             let currentObj = this;
             axios
-                .get(`/comment/${resource_id}`)
+                .get(`/admin/comment/${resource_id}`)
                 .then(function(resp) {
                     // console.log(resp.data);
 
@@ -151,7 +151,7 @@ export default {
                 return;
             }
             axios
-                .delete(`/comment/${resource_id}`)
+                .delete(`/admin/comment/${resource_id}`)
                 .then(function(resp) {
                     // currentObj.resources =
                     let comment = currentObj.resources.filter(resource => {
@@ -169,7 +169,7 @@ export default {
         onPageChange() {
             let currentObj = this;
             axios
-                .get(`/comment?page=${currentObj.page}`)
+                .get(`/admin/comment?page=${currentObj.page}`)
                 .then(function(resp) {
                     currentObj.resources = resp.data.data.data;
                     currentObj.total = resp.data.data.total;
@@ -219,7 +219,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get("/comment")
+            .get("/admin/comment")
             .then(function(resp) {
                 currentObj.resources = resp.data.data.data;
                 currentObj.total = resp.data.data.total;

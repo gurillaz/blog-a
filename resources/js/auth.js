@@ -15,16 +15,19 @@ const config = {
 
     // API endpoints used in Vue Auth
     registerData: {
-        url: '/auth/register',
+        url: '/guest/register',
         method: 'POST',
         redirect: '/login'
     },
-    loginDate: {
-        url: '/auth/login',
+    loginData: {
+        url: '/guest/login',
         method: 'POST',
         redirect: '/',
         fetchuser: true
     },
+
+
+
     logoutData: {
         url: '/auth/logout',
         method: 'POST',

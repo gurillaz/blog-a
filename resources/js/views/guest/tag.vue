@@ -40,38 +40,12 @@ export default {
     },
     computed: {},
     methods: {
-        toggle_bookmark(article_id) {
-            console.log(this.$auth.user().bookmarks);
-            console.log(article_id);
-            let currentObj = this;
-            if (currentObj.$auth.user().bookmarks.includes(article_id)) {
-                axios
-                    .post("auth/toggle_bookmark", { article_id: article_id })
-                    .then(function(resp) {
-                        currentObj.$auth.user().bookmarks = currentObj.$auth
-                            .user()
-                            .bookmarks.filter(bm => bm !== article_id);
-                    })
-                    .catch(function(resp) {
-                        console.log(resp);
-                    });
-            } else {
-                axios
-                    .post("auth/toggle_bookmark", { article_id: article_id })
-                    .then(function(resp) {
-                        // currentObj.$auth.user().bookmarks =
-                        currentObj.$auth.user().bookmarks.push(article_id);
-                    })
-                    .catch(function(resp) {
-                        console.log(resp);
-                    });
-            }
-        }
+
     },
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get(`/tag/${currentObj.id}`)
+            .get(`/guest/tag/${currentObj.id}`)
             .then(function(resp) {
                 currentObj.resource = resp.data.resource;
                 currentObj.resource_relations = resp.data.resource_relations;

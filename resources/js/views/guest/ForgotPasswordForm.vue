@@ -76,7 +76,7 @@ export default {
             const app = this;
 
             this.$http
-                .post("/auth/reset/password/" + this.$route.params.token, {
+                .post("/guest/reset/password/" + this.$route.params.token, {
                     token: this.$route.params.token,
                     email: this.email,
                     password: this.password,

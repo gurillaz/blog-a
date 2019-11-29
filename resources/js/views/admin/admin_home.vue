@@ -357,7 +357,7 @@ export default {
         show_resource_article_view(resource_id) {
             let currentObj = this;
             axios
-                .get(`/article/${resource_id}`)
+                .get(`/admin/article/${resource_id}`)
                 .then(function(resp) {
                     // console.log(resp.data);
 
@@ -375,7 +375,7 @@ export default {
         show_resource_comment_view(resource_id) {
             let currentObj = this;
             axios
-                .get(`/comment/${resource_id}`)
+                .get(`/admin/comment/${resource_id}`)
                 .then(function(resp) {
                     // console.log(resp.data);
 
@@ -390,22 +390,7 @@ export default {
                     alert("Something went wrong!");
                 });
         },
-        delete_resource(resource_id) {
-            let currentObj = this;
-            axios
-                .delete(`/user/${user_id}`)
-                .then(function(resp) {
-                    currentObj.resources = currentObj.resources.filter(
-                        resource => {
-                            return resource.id != resource_id;
-                        }
-                    );
-                    // console.log(currentObj.pageCount);
-                })
-                .catch(function(resp) {
-                    console.log(resp);
-                });
-        }
+
     },
     created() {
         this.axios.interceptors.request.use(
@@ -442,7 +427,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get("/admin_home")
+            .get("/admin/admin_home")
             .then(function(resp) {
                 currentObj.resources = resp.data.resources;
 

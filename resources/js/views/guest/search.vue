@@ -229,7 +229,7 @@ export default {
             let currentObj = this;
             currentObj.results = [];
             axios
-                .get(`/search`, {
+                .get(`/guest/search`, {
                     params: currentObj.query
                 })
                 .then(function(resp) {
@@ -257,35 +257,9 @@ export default {
                 .catch(function(resp) {
                     console.log(resp);
                 });
-        },
-
-        toggle_bookmark(article_id) {
-            let currentObj = this;
-            if (currentObj.$auth.user().bookmarks.includes(article_id)) {
-                axios
-                    .post("auth/toggle_bookmark", { article_id: article_id })
-                    .then(function(resp) {
-                        currentObj.$auth.user().bookmarks = currentObj.$auth
-                            .user()
-                            .bookmarks.filter(bm => bm !== article_id);
-                    })
-                    .catch(function(resp) {
-                        console.log(resp);
-                    });
-            } else {
-                axios
-                    .post("auth/toggle_bookmark", { article_id: article_id })
-                    .then(function(resp) {
-                        // currentObj.$auth.user().bookmarks =
-                        currentObj.$auth.user().bookmarks.push(article_id);
-                    })
-                    .catch(function(resp) {
-                        console.log(resp);
-                    });
-            }
         }
     },
-        created() {
+    created() {
         this.axios.interceptors.request.use(
             config => {
                 // this.$store.commit("loading", true);
@@ -320,7 +294,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get(`/search/data_autofill`)
+            .get(`/guest/search/data_autofill`)
             .then(function(resp) {
                 currentObj.data_autofill = resp.data.data_autofill;
                 // currentObj.resource_relations = resp.data.resource_relations;

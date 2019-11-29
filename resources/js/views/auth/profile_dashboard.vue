@@ -309,7 +309,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get("/auth_user")
+            .get("/auth/auth_user")
             .then(function(resp) {
                 currentObj.resource = resp.data.resource;
                 currentObj.resource_relations = resp.data.resource_relations;

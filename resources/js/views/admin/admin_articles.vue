@@ -36,23 +36,16 @@
                         </template>
                         <template v-slot:item.action="{ item }">
                             <v-row class="text-right">
-                                <v-btn
+                                <!-- <v-btn
                                     tile
                                     text
                                     small
                                     color="red"
                                     v-on:click="delete_resource(item.id)"
                                 >Delete</v-btn>
-         
+                                -->
 
-                                <v-btn
-                                    tile
-                                    text
-                                    small
-                                    link
-                                    :to="`/admin/user/${item.id}`"
-                                    target="_blank"
-                                >Show</v-btn>
+                                <v-btn tile text small link :to="`/admin/article/${item.id}`">Show</v-btn>
                             </v-row>
                         </template>
                     </v-data-table>
@@ -64,8 +57,7 @@
                     ></v-pagination>
                 </v-card>
             </v-col>
-        </v-row>        
-
+        </v-row>
     </v-container>
 </template>
 
@@ -103,31 +95,14 @@ export default {
             saving_errors: []
         };
     },
-    computed: {
-
-    },
+    computed: {},
 
     methods: {
-        delete_resource(resource_id) {
-            let currentObj = this;
-            axios
-                .delete(`/user/${user_id}`)
-                .then(function(resp) {
-                    currentObj.resources = currentObj.resources.filter(
-                        resource => {
-                            return resource.id != resource_id;
-                        }
-                    );
-                    // console.log(currentObj.pageCount);
-                })
-                .catch(function(resp) {
-                    console.log(resp);
-                });
-        },
+
         onPageChange() {
             let currentObj = this;
             axios
-                .get(`/article?page=${currentObj.page}`)
+                .get(`/admin/article?page=${currentObj.page}`)
                 .then(function(resp) {
                     currentObj.resources = resp.data.data.data;
                     currentObj.total = resp.data.data.total;
@@ -177,7 +152,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get("/article")
+            .get("/admin/article")
             .then(function(resp) {
                 currentObj.resources = resp.data.data.data;
                 currentObj.total = resp.data.data.total;

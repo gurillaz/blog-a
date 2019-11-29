@@ -87,7 +87,7 @@ export default {
             let currentObj = this;
             if (currentObj.$auth.user().bookmarks.includes(article_id)) {
                 axios
-                    .post("toggle_bookmark", { article_id: article_id })
+                    .post("/auth/toggle_bookmark", { article_id: article_id })
                     .then(function(resp) {
                         currentObj.$auth.user().bookmarks = currentObj.$auth
                             .user()
@@ -98,7 +98,7 @@ export default {
                     });
             } else {
                 axios
-                    .post("toggle_bookmark", { article_id: article_id })
+                    .post("/auth/toggle_bookmark", { article_id: article_id })
                     .then(function(resp) {
                         // currentObj.$auth.user().bookmarks =
                         currentObj.$auth.user().bookmarks.push(article_id);

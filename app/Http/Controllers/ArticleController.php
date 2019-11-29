@@ -287,4 +287,80 @@ class ArticleController extends Controller
     {
         //
     }
+
+
+
+    public function pending_articles()
+    {
+
+
+        $pending_articles = Article::select(['id', 'slug', 'title', 'category_id', "publishing_date", 'created_at', 'meta_status', 'user_id'])
+
+            ->where('meta_status', 'pending')
+            ->with(['category:id,name', 'user:id,name'])
+            ->withCount('comments')
+
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $denied_articles = Article::select(['id', 'slug', 'title', 'category_id', "publishing_date", 'created_at', 'meta_status', 'user_id'])
+
+            ->where('meta_status', 'deleted')
+            ->with(['category:id,name', 'user:id,name'])
+            ->withCount('comments')
+
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+
+        $resources = [];
+        $resources['pending_articles'] = $pending_articles;
+        $resources['denied_articles'] = $denied_articles;
+
+
+
+        return Response::json([
+            'resources' => $resources
+        ], 200);
+    }
+    public function approve_article(Article $article)
+    {
+
+        $article->meta_status = "published";
+        $article->publishing_date = Carbon::now()->toDateTimeString();
+
+
+
+        return Response::json([
+            'msg' => "success"
+        ], 200);
+    }
+    public function deny_article(Article $article)
+    {
+        //TODO set this to denied
+        $article->meta_status = "deleted";
+        $article->publishing_date = NULL;
+
+
+
+        return Response::json([
+            'msg' => "success"
+        ], 200);
+    }
+    public function aprove_all_articles()
+    {
+        $articles = Article::where('meta_status', 'pending')->get();
+        //TODO set this to denied
+        foreach ($articles as $article) {
+            $article->meta_status = "published";
+            $article->publishing_date = Carbon::now()->toDateTimeString();
+        };
+
+
+
+
+        return Response::json([
+            'msg' => "success"
+        ], 200);
+    }
 }

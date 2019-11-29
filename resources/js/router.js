@@ -1,13 +1,14 @@
 import VueRouter from 'vue-router';
 import Vue from 'vue';
 
-// Pages
+// Layouts and error page
 import ClientLayout from './Layouts/ClientLayout.vue';
 import AdminLayout from './Layouts/AdminLayout.vue';
 import ErrorPage from './views/common/error_page.vue';
 
-//Admin pages
 
+
+//Admin pages
 import AdminHome from './views/admin/admin_home.vue';
 import AdminUsers from './views/admin/admin_users.vue';
 import AdminCategories from './views/admin/admin_categories.vue';
@@ -19,26 +20,24 @@ import AdminPendingComments from './views/admin/admin_comments_pending.vue';
 import AdminFeaturedOrder from './views/admin/admin_featured_order.vue';
 import AdminUser from './views/admin/admin_user.vue';
 
+import AdminArticle from './views/admin/admin_article.vue';
 
 
-
-
-
-// Client Pages
+// Guest pages
 import Home from './views/guest/home.vue';
 import Login from './views/guest/Login.vue';
 import Register from './views/guest/Register.vue';
 import ForgotPassword from './views/guest/ForgotPassword.vue';
 import ForgotPasswordForm from './views/guest/ForgotPasswordForm.vue';
-
-import Profile from './views/auth/profile_dashboard.vue';
 import Search from './views/guest/search.vue';
 import Category from './views/guest/category.vue';
 import Tag from './views/guest/tag.vue';
 import User from './views/guest/user.vue';
-
-
 import Article from './views/guest/article.vue';
+
+
+//Auth pages
+import Profile from './views/auth/profile_dashboard.vue';
 import ArticleNew from './views/auth/article_new.vue';
 import ArticleEdit from './views/auth/article_edit.vue';
 
@@ -208,6 +207,11 @@ const router = new VueRouter({
                     path: 'user/:id',
                     name: 'admin.user',
                     component: AdminUser,
+                    props: true
+                }, {
+                    path: 'article/:id',
+                    name: 'admin.article',
+                    component: AdminArticle,
                     props: true
                 }, {
                     path: 'users',

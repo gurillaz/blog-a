@@ -261,7 +261,7 @@ export default {
         show_resource_edit(resource_id) {
             let currentObj = this;
             axios
-                .get(`/category/${resource_id}`)
+                .get(`/admin/category/${resource_id}`)
                 .then(function(resp) {
                     // console.log(resp.data);
 
@@ -280,7 +280,7 @@ export default {
         show_resource_view(resource_id) {
             let currentObj = this;
             axios
-                .get(`/category/${resource_id}`)
+                .get(`/admin/category/${resource_id}`)
                 .then(function(resp) {
                     // console.log(resp.data);
 
@@ -304,7 +304,7 @@ export default {
                 return;
             }
             axios
-                .delete(`/category/${resource_id}`)
+                .delete(`/admin/category/${resource_id}`)
                 .then(function(resp) {
                     // currentObj.resources =
                     currentObj.resources = currentObj.resources.filter(
@@ -327,7 +327,7 @@ export default {
             }
             axios
                 .put(
-                    `/category/${currentObj.edit_resource.id}`,
+                    `/admin/category/${currentObj.edit_resource.id}`,
                     currentObj.edit_resource
                 )
                 .then(function(resp) {
@@ -356,7 +356,7 @@ export default {
             let currentObj = this;
             currentObj.saving_errors = [];
             axios
-                .post(`/category`, currentObj.new_resource)
+                .post(`/admin/category`, currentObj.new_resource)
                 .then(function(resp) {
                     // currentObj.resources =
                     currentObj.resources.unshift(resp.data.resource);
@@ -375,7 +375,7 @@ export default {
         onPageChange() {
             let currentObj = this;
             axios
-                .get(`/category?page=${currentObj.page}`)
+                .get(`/admin/category?page=${currentObj.page}`)
                 .then(function(resp) {
                     currentObj.resources = resp.data.data.data;
                     currentObj.total = resp.data.data.total;
@@ -425,7 +425,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get("/category")
+            .get("/admin/category")
             .then(function(resp) {
                 currentObj.resources = resp.data.data.data;
                 currentObj.total = resp.data.data.total;

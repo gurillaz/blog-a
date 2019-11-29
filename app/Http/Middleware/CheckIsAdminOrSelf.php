@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class CheckIsAdminOrSelf
+class CheckIsAdminOrSelf extends Middleware
 {
     /**
      * Handle an incoming request.

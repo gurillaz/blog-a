@@ -206,26 +206,10 @@ export default {
     computed: {},
 
     methods: {
-        delete_resource(resource_id) {
-            let currentObj = this;
-            axios
-                .delete(`/user/${user_id}`)
-                .then(function(resp) {
-                    currentObj.resources = currentObj.resources.filter(
-                        resource => {
-                            return resource.id != resource_id;
-                        }
-                    );
-                    // console.log(currentObj.pageCount);
-                })
-                .catch(function(resp) {
-                    console.log(resp);
-                });
-        },
         show_resource_view(resource_id) {
             let currentObj = this;
             axios
-                .get(`/comment/${resource_id}`)
+                .get(`/admin/comment/${resource_id}`)
                 .then(function(resp) {
                     // console.log(resp.data);
 
@@ -246,7 +230,7 @@ export default {
                 return;
             }
             axios
-                .post(`/aprove_all_comments`)
+                .post(`/admin/aprove_all_comments`)
                 .then(function(resp) {
                     currentObj.resources.pending_comments = [];
                     // console.log(currentObj.pageCount);
@@ -261,7 +245,7 @@ export default {
                 return;
             }
             axios
-                .post(`/approve_comment/${resource_id}`)
+                .post(`/admin/approve_comment/${resource_id}`)
                 .then(function(resp) {
                     currentObj.resources.pending_comments = currentObj.resources.pending_comments.filter(
                         resource => {
@@ -286,7 +270,7 @@ export default {
                 return;
             }
             axios
-                .post(`/deny_comment/${resource_id}`)
+                .post(`/admin/deny_comment/${resource_id}`)
                 .then(function(resp) {
                     currentObj.resources.denied_comments.unshift(
                         currentObj.resources.pending_comments.filter(
@@ -344,7 +328,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get("/pending_comments")
+            .get("/admin/pending_comments")
             .then(function(resp) {
                 currentObj.resources = resp.data.resources;
 

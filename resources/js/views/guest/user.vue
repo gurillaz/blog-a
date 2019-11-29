@@ -236,14 +236,14 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get(`/user/${currentObj.id}`)
+            .get(`/guest/user/${currentObj.id}`)
             .then(function(resp) {
                 currentObj.resource = resp.data.resource;
                 currentObj.resource_relations = resp.data.resource_relations;
             })
             .catch(function(resp) {
-                             console.log(resp);
-                currentObj.$router.push({name:'main.error'});
+                console.log(resp);
+                currentObj.$router.push({ name: "main.error" });
             });
     }
 };

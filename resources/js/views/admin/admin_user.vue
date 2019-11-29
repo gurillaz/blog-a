@@ -300,7 +300,7 @@ export default {
         show_resource_article_view(resource_id) {
             let currentObj = this;
             axios
-                .get(`/article/${resource_id}`)
+                .get(`/admin/article/${resource_id}`)
                 .then(function(resp) {
                     // console.log(resp.data);
 
@@ -318,7 +318,7 @@ export default {
         show_resource_comment_view(resource_id) {
             let currentObj = this;
             axios
-                .get(`/comment/${resource_id}`)
+                .get(`/admin/comment/${resource_id}`)
                 .then(function(resp) {
                     // console.log(resp.data);
 
@@ -340,7 +340,7 @@ export default {
                 return;
             }
             axios
-                .delete(`/user/${currentObj.resource.id}`)
+                .delete(`/admin/user/${currentObj.resource.id}`)
                 .then(function(resp) {
                     currentObj.$router.replace("/admin/users");
                     // console.log(currentObj.pageCount);
@@ -363,7 +363,7 @@ export default {
                 return;
             }
             axios
-                .post(`/make_admin/${currentObj.resource.id}`)
+                .post(`/admin/make_admin/${currentObj.resource.id}`)
                 .then(function(resp) {
                     currentObj.resource.role = "admin";
                     alert("It is done!");
@@ -409,7 +409,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get(`/user/${currentObj.id}`)
+            .get(`/admin/user/${currentObj.id}`)
             .then(function(resp) {
                 currentObj.resource = resp.data.resource;
 

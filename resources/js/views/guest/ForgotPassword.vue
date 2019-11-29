@@ -61,7 +61,7 @@ export default {
     },
     methods: {
         requestResetPassword() {
-            this.$http.post("/auth/reset-password", { email: this.email }).then(
+            this.$http.post("/guest/reset-password", { email: this.email }).then(
                 result => {
                     this.response = result.data;
                     this.success = true;

@@ -607,7 +607,7 @@ export default {
         // console.log(this.$auth.user())
         let currentObj = this;
         axios
-            .get(`/article/slug/${currentObj.slug}`)
+            .get(`/guest/article/slug/${currentObj.slug}`)
             .then(function(resp) {
                 // console.log(resp.data);
 

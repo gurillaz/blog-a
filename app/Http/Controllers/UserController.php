@@ -207,4 +207,15 @@ class UserController extends Controller
             'msg' => 'User deleted'
         ], 200);
     }
+
+    public function make_admin(User $user)
+    {
+        $user->role = 'admin';
+        $user->save();
+
+
+        return Response::json([
+            'msg' => 'success'
+        ], 200);
+    }
 }

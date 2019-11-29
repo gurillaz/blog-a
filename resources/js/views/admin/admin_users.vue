@@ -89,7 +89,7 @@ export default {
         delete_user(user_id) {
             let currentObj = this;
             axios
-                .delete(`/user/${user_id}`)
+                .delete(`/admin/user/${user_id}`)
                 .then(function(resp) {
                     currentObj.resources = currentObj.resources.filter(user => {
                         return user.id != user_id;
@@ -103,7 +103,7 @@ export default {
         onPageChange() {
             let currentObj = this;
             axios
-                .get(`/user?page=${currentObj.page}`)
+                .get(`/admin/user?page=${currentObj.page}`)
                 .then(function(resp) {
                     currentObj.resources = resp.data.data.data;
                     currentObj.total = resp.data.data.total;
@@ -153,7 +153,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get("/user")
+            .get("/admin/user")
             .then(function(resp) {
                 currentObj.resources = resp.data.data.data;
                 currentObj.pageCount = resp.data.data.last_page;

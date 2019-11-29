@@ -194,7 +194,7 @@ export default {
             });
 
             axios
-                .post("/save_featured_order", articles_order)
+                .post("/admin/save_featured_order", articles_order)
                 .then(function(resp) {
                     console.log(resp.data.request);
                     alert("Done");
@@ -253,7 +253,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get("/featured_order")
+            .get("/admin/featured_order")
             .then(function(resp) {
                 currentObj.articles = resp.data.resources.articles;
                 currentObj.selected_articles =

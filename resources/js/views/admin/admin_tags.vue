@@ -261,7 +261,7 @@ export default {
         show_resource_edit(resource_id) {
             let currentObj = this;
             axios
-                .get(`/tag/${resource_id}`)
+                .get(`/admin/tag/${resource_id}`)
                 .then(function(resp) {
                     // console.log(resp.data);
 
@@ -280,7 +280,7 @@ export default {
         show_resource_view(resource_id) {
             let currentObj = this;
             axios
-                .get(`/tag/${resource_id}`)
+                .get(`/admin/tag/${resource_id}`)
                 .then(function(resp) {
                     // console.log(resp.data);
 
@@ -304,7 +304,7 @@ export default {
                 return;
             }
             axios
-                .delete(`/tag/${resource_id}`)
+                .delete(`/admin/tag/${resource_id}`)
                 .then(function(resp) {
                     // currentObj.resources =
                     currentObj.resources = currentObj.resources.filter(
@@ -326,7 +326,7 @@ export default {
             }
             axios
                 .put(
-                    `/tag/${currentObj.edit_resource.id}`,
+                    `/admin/tag/${currentObj.edit_resource.id}`,
                     currentObj.edit_resource
                 )
                 .then(function(resp) {
@@ -356,7 +356,7 @@ export default {
             let currentObj = this;
             currentObj.saving_errors = [];
             axios
-                .post(`/tag`, currentObj.new_resource)
+                .post(`/admin/tag`, currentObj.new_resource)
                 .then(function(resp) {
                     // currentObj.resources =
                     currentObj.resources.unshift(resp.data.resource);
@@ -376,7 +376,7 @@ export default {
         onPageChange() {
             let currentObj = this;
             axios
-                .get(`/tag?page=${currentObj.page}`)
+                .get(`/admin/tag?page=${currentObj.page}`)
                 .then(function(resp) {
                     currentObj.resources = resp.data.data.data;
                     currentObj.total = resp.data.data.total;
@@ -426,7 +426,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get("/tag")
+            .get("/admin/tag")
             .then(function(resp) {
                 currentObj.resources = resp.data.data.data;
                 currentObj.total = resp.data.data.total;

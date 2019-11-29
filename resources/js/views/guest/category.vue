@@ -68,7 +68,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get(`/category/${currentObj.id}`)
+            .get(`/guest/category/${currentObj.id}`)
             .then(function(resp) {
                 currentObj.resource = resp.data.resource;
                 currentObj.resource_relations = resp.data.resource_relations;

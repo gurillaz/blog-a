@@ -230,7 +230,7 @@ export default {
             formdata.append("category_id", currentObj.new_article.category_id);
 
             axios
-                .post("/article", formdata, {
+                .post("/auth/article", formdata, {
                     headers: {
                         "content-type": "multipart/form-data"
                     }
@@ -280,7 +280,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get("/article/create")
+            .get("/auth/article/create")
             .then(function(resp) {
                 currentObj.data_autofill = resp.data.data_autofill;
             })

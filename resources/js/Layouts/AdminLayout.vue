@@ -4,7 +4,8 @@
             <v-list>
                 <v-list-item class="mb-12">
                     <v-list-item-content class="text-center">
-                        <h1 class="title">Blog-a</h1>
+                        <h1 class="title"><router-link to="/">Blog-a</router-link></h1>
+
                         <v-list-item-subtitle>Admin dashbard</v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
