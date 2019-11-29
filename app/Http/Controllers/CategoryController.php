@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Http\Requests\CreateCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 
 class CategoryController extends Controller
@@ -22,7 +25,6 @@ class CategoryController extends Controller
             ],
             200
         );
-
     }
 
     /**
@@ -41,9 +43,24 @@ class CategoryController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateCategoryRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+
+        $category = new Category();
+        $category->name = $validated['name'];
+        $category->description = $validated['description'];
+        $category->user_id = Auth::user()->id;
+        $category->save();
+
+
+        $category['user'] = $category->user()->first(['id', 'name']);
+        $category['articles_count'] = 0;
+
+        return Response::json([
+            'resource' => $category,
+        ], 200);
     }
 
     /**
@@ -60,9 +77,9 @@ class CategoryController extends Controller
 
 
         $resource = $category;
-        $resource_relations['articles'] = 
-        $category->articles(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', 'user_id'])
-        ->with("user:id,name,role")->withCount('comments')->get();
+        $resource_relations['articles'] =
+            $category->articles(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', 'user_id'])
+            ->with("user:id,name,role")->withCount('comments')->get();
 
 
         return Response::json([
@@ -89,9 +106,15 @@ class CategoryController extends Controller
      * @param  \App\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
-        //
+        $validated = $request->validated();
+        $category->name = $validated['name'];
+        $category->description = $validated['description'];
+        $category->save();
+        return Response::json([
+            'msg' => 'sucess',
+        ], 200);
     }
 
     /**
@@ -102,6 +125,23 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        foreach ($category->articles as $article) {
+            foreach ($article->comments as $comment) {
+                $comment->replies()->delete();
+                $comment->delete();
+            }
+            $article->meta_status = "deleted";
+            $article->delete();
+            $article->save();   
+        }
+        // $category->articles()->comments()->delete();
+        // $category->articles()->delete();
+
+        $category->delete();
+        $category->save();
+
+        return Response::json([
+            'msg' => 'success',
+        ], 200);
     }
 }

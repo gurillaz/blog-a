@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateTagRequest;
+use App\Http\Requests\UpdateTagRequest;
 use App\Tag;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 
 class TagController extends Controller
@@ -19,6 +22,7 @@ class TagController extends Controller
             // ->withTrashed()
             ->with('user:id,name')
             ->withCount('articles')
+            ->orderBy('created_at', 'desc')
             ->paginate(10);
 
         return Response::json(
@@ -45,9 +49,25 @@ class TagController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateTagRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+
+        $tag = new Tag();
+        $tag->name = $validated['name'];
+        $tag->description = $validated['description'];
+        $tag->user_id = Auth::user()->id;
+        $tag->save();
+
+
+
+        $tag['user'] = $tag->user()->first(['id', 'name']);
+        $tag['articles_count'] = 0;
+
+        return Response::json([
+            'resource' => $tag,
+        ], 200);
     }
 
     /**
@@ -91,9 +111,15 @@ class TagController extends Controller
      * @param  \App\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Tag $tag)
+    public function update(UpdateTagRequest $request, Tag $tag)
     {
-        //
+        $validated = $request->validated();
+        $tag->name = $validated['name'];
+        $tag->description = $validated['description'];
+        $tag->save();
+        return Response::json([
+            'msg' => 'sucess',
+        ], 200);
     }
 
     /**
@@ -104,6 +130,11 @@ class TagController extends Controller
      */
     public function destroy(Tag $tag)
     {
-        //
+        $tag->articles()->detach([]);
+        $tag->delete();
+
+        return Response::json([
+            'msg' => 'success',
+        ], 200);
     }
 }

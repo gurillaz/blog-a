@@ -32,7 +32,7 @@ class CreateArticlesTable extends Migration
             $table->string('meta_status');
             $table->string('meta_is-feature')->nullable();
             $table->string('meta_open-new-window')->nullable();
-            $table->string('meta_list_place')->nullable();
+            $table->unsignedInteger('meta_list_place')->nullable();
 
 
             $table->foreign('category_id')->references('id')->on('categories');

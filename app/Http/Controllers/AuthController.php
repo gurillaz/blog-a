@@ -216,7 +216,7 @@ class AuthController extends Controller
     public function toggle_bookmark(ToggleBookmarkRequest $request)
     {
         $validated = $request->validated();
-        
+
         Auth::user()->bookmarks()->toggle($validated['article_id']);
         return response()->json(
             [

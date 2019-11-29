@@ -7,9 +7,9 @@ import VueAxios from 'vue-axios';
 // import VueRouter from 'vue-router';
 import VueAuth from '@websanova/vue-auth';
 
-import auth from '../auth.js';
-import router from '../router.js';
-import App from './Layouts/App.vue';
+import auth from './auth.js';
+import router from './router.js';
+import App from './layouts/App.vue';
 
 
 

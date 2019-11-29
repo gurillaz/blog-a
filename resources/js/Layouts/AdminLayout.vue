@@ -51,6 +51,15 @@
                             <v-list-item-title>Pending Comments</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
+                    <v-list-item to="/admin/featured_order">
+                        <v-list-item-icon>
+                            <v-icon>mdi-newspaper</v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                            <v-list-item-title>Fetured & Order</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
 
                     <v-divider></v-divider>
 

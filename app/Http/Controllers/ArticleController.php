@@ -26,18 +26,23 @@ class ArticleController extends Controller
     public function index()
     {
         $resources = Article::query()
-        // ->withTrashed()
-        ->with('user:id,name')
-        ->with('category:id,name')
-        ->withCount('comments')
-        ->paginate(10);
+            ->withTrashed()
+            ->with('user:id,name')
+            ->with('category:id,name')
+            ->withCount('comments')
+            ->paginate(10);
+
+
+
+
+
+
         return response()->json(
             [
                 'data' => $resources,
             ],
             200
         );
-
     }
 
     /**
@@ -126,7 +131,7 @@ class ArticleController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show(Article $article)
-    { 
+    {
 
 
         $this->authorize('view', $article);
@@ -145,8 +150,6 @@ class ArticleController extends Controller
         return Response::json([
             'resource' => $resource,
         ], 200);
-
-
     }
     /**
      * Display the specified resource.

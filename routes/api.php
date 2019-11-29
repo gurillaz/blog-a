@@ -6,7 +6,7 @@ header('Access-Control-Allow-Headers:  Content-Type, X-Auth-Token, Origin, Autho
 
 use App\Http\Controllers\ArticleController;
 use Illuminate\Http\Request;
-
+// use Symfony\Component\Routing\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,10 +18,18 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+// Route::group(['prefix' => 'guest'], function () {
+    
+    Route::get('search/data_autofill', 'SearchController@data_autofill');
+    Route::get('search', 'SearchController@get_results');
+    Route::get('home', 'WebClientController@home');
+    Route::get('article/slug/{slug}', 'ArticleController@show_slug');
+// });
 
-Route::get('search/data_autofill', 'SearchController@data_autofill');
-Route::get('search', 'SearchController@get_results');
-Route::get('home', 'WebClientController@home');
+// Route::group(['middleware' => ['groupName']], function () {
+    
+// });
+
 Route::get('admin_home', 'WebClientController@admin_home');
 
 Route::get('pending_articles', 'WebClientController@pending_articles');
@@ -33,8 +41,10 @@ Route::get('pending_comments', 'WebClientController@pending_comments');
 Route::post('approve_comment/{comment}', 'WebClientController@approve_comment');
 Route::post('deny_comment/{comment}', 'WebClientController@deny_comment');
 Route::post('aprove_all_comments', 'WebClientController@aprove_all_comments');
+Route::get('featured_order', 'WebClientController@featured_order');
+Route::post('save_featured_order', 'WebClientController@save_featured_order');
+Route::post('make_admin/{user}', 'WebClientController@make_admin');
 
-Route::get('article/slug/{slug}', 'ArticleController@show_slug');
 
 Route::resource('article', 'ArticleController');
 Route::resource('user', 'UserController');

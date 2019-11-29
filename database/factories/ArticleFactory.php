@@ -9,46 +9,46 @@ use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image as Image;
 
 $factory->define(Article::class, function (Faker $faker) {
-    
-    $title = $faker->sentence(6,true);
 
-    $faker_image = $faker->image('public\\storage\\images\\', $width = 1280, $height = 720 ,null,false); 
-    $image = Image::make(file_get_contents(public_path()."\\storage\\images\\".$faker_image));
+    $title = $faker->sentence(6, true);
+
+    $faker_image = $faker->image('public\\storage\\images\\', $width = 1280, $height = 720, null, false);
+    $image = Image::make(file_get_contents(public_path() . "\\storage\\images\\" . $faker_image));
 
     // dd(Image::make(file_get_contents(public_path().'\\watermark_mask.png')));
-    $watermark_mask = Image::make(file_get_contents(public_path().'\\watermark_mask.png'));
+    $watermark_mask = Image::make(file_get_contents(public_path() . '\\watermark_mask.png'));
 
 
 
-    $image->insert($watermark_mask,"center")
-    ->save("public\\storage\\images\\".Str::slug($title,'-').".jpg");
+    $image->insert($watermark_mask, "center")
+        ->save("public\\storage\\images\\" . Str::slug($title, '-') . ".jpg");
     // Thumbnail
-    $thumbnail = Image::Make(file_get_contents(public_path()."\\storage\\images\\".$faker_image))
-    ->resize(200, null, function ($constraint) {
-        $constraint->aspectRatio();
-    })
-    ->save("public\\storage\\images\\".Str::slug($title,'-')."_thumbnail.png");
-    
+    $thumbnail = Image::Make(file_get_contents(public_path() . "\\storage\\images\\" . $faker_image))
+        ->resize(200, null, function ($constraint) {
+            $constraint->aspectRatio();
+        })
+        ->save("public\\storage\\images\\" . Str::slug($title, '-') . "_thumbnail.png");
+
     // dd(Storage::delete(public_path()."\\storage\\images\\".$faker_image));
-    if(File::exists(public_path()."\\storage\\images\\".$faker_image)) {
+    if (File::exists(public_path() . "\\storage\\images\\" . $faker_image)) {
         // dd("File exists");
-        File::delete(public_path()."\\storage\\images\\".$faker_image);
+        File::delete(public_path() . "\\storage\\images\\" . $faker_image);
     }
-    
+
 
 
     return [
-        'slug'=>Str::slug($title,'-'),
-        'title'=>$title,
-        'summary'=> $faker->paragraph(random_int(15,25)),
-        'body'=> $faker->paragraph(random_int(40,70)),
-        'image_path'=>Str::slug($title,'-').".jpg",
-        'publishing_date' => $faker->dateTimeBetween('- 90 days','now'),
-        
-        'meta_status'=>$faker->randomElement(['pending','published','deleted']),
-        'meta_is-feature'=>$faker->randomElement(['true','false']),
-        'meta_open-new-window'=>$faker->randomElement(['true','false']),
-        'user_id'=>1
+        'slug' => Str::slug($title, '-'),
+        'title' => $title,
+        'summary' => $faker->paragraph(random_int(15, 25)),
+        'body' => $faker->paragraph(random_int(40, 70)),
+        'image_path' => Str::slug($title, '-') . ".jpg",
+        'publishing_date' => $faker->dateTimeBetween('- 90 days', 'now'),
+
+        'meta_status' => $faker->randomElement(['pending', 'published', 'deleted']),
+        'meta_is-feature' => $faker->randomElement(['true', 'false']),
+        'meta_open-new-window' => $faker->randomElement(['true', 'false']),
+        'user_id' => 1
     ];
 
 

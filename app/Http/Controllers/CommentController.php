@@ -103,8 +103,18 @@ class CommentController extends Controller
      * @param  \App\Comment  $comment
      * @return \Illuminate\Http\Response
      */
-    public function show(Comment $comment)
+    public function show($comment_id)
     {
+        $comment = Comment::withTrashed()->find($comment_id);
+
+        if ($comment == null) {
+            return Response::json([
+                'message' => 'Resource not found',
+            ], 404);
+        }
+
+
+
         $this->authorize('view', $comment);
 
         $resource = [];
@@ -168,10 +178,12 @@ class CommentController extends Controller
 
         $comment->user_id = NULL;
         $comment->body = "[deleted]";
+        $comment->meta_status = 'deleted';
         $comment->save();
-        
+
         return Response::json([
-            'message' => "Comment deleted!"
+            'message' => "Comment deleted!",
+            'comment' => $comment
         ], 200);
     }
 }
