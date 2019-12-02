@@ -57,6 +57,10 @@ class AuthController extends Controller
                 'msg' => 'Email or password incorrect!'
             ], 400);
         }
+
+
+        activity()->log('logged_in');
+
         return response([
             'status' => 'success'
         ])->header('Authorization', $token);
@@ -65,6 +69,9 @@ class AuthController extends Controller
     public function logout()
     {
         $this->guard()->logout();
+
+        activity()->log('logged_out');
+
         return response()->json([
             'status' => 'success',
             'msg' => 'Logged out Successfully.'
@@ -205,6 +212,8 @@ class AuthController extends Controller
         $user->save();
 
 
+
+
         return response()->json(
             [
                 'status' => 'success',
@@ -217,7 +226,9 @@ class AuthController extends Controller
     {
         $validated = $request->validated();
 
+
         Auth::user()->bookmarks()->toggle($validated['article_id']);
+        activity()->log('toggled_bookmark');
         return response()->json(
             [
                 'status' => 'success',

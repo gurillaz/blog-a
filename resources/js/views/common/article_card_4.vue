@@ -2,8 +2,8 @@
     <v-card tile class="px-4 pt-3 pb-0" outlined>
         <v-card-title
             class="serif-font pb-0 mb-0"
-            style="font-size:18px; line-height:1.1"
-        >{{article.title}}</v-card-title>
+            style="font-size:18px; line-height:1.1;"
+        ><span style="height:3.5rem">{{article.title}}</span></v-card-title>
         <v-card-subtitle class="my-0 py-0">
             <span class="black--text caption">{{article.publishing_date}}</span>
         </v-card-subtitle>

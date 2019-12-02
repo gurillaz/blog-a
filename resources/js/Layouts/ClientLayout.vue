@@ -56,7 +56,7 @@
                             <v-spacer></v-spacer>
 
                             <v-toolbar-items>
-                                               <router-link
+                                <router-link
                                     v-if="$auth.user().role == 'admin'"
                                     to="/admin/home"
                                     class="main-toolbar-link my-auto text-uppercase caption font-weight-bold mx-2 red--text"

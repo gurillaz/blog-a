@@ -11,9 +11,13 @@ use Illuminate\Support\Facades\Response;
 
 class UserController extends Controller
 {
-    //
+    
+
     public function index()
     {
+
+        
+
 
         $users = User::query()->withCount('comments')->withCount('articles')->paginate(10);
         return response()->json(
@@ -24,14 +28,16 @@ class UserController extends Controller
         );
     }
 
-    private function admin_show_user(User $user)
+    public function admin_show_user(User $user)
     {
+        
+
+        $this->authorizeForUser(Auth::user(),'admin_show_user');
         $resource = [];
 
 
         $resource = $user;
         $resource['comments'] = $user->comments()
-            ->withTrashed()
 
             ->get()->map(function ($comment) {
                 if ($comment->commentable_type == Comment::class) {
@@ -45,7 +51,6 @@ class UserController extends Controller
 
 
         $articles = $user->articles(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id', 'meta_status'])
-            ->withTrashed()
             ->withCount('comments')
 
             ->with(['category:id,name', 'user:id,name'])
@@ -66,9 +71,7 @@ class UserController extends Controller
     public function show(User $user)
     {
 
-        if (Auth::check() && Auth::user()->role == 'admin') {
-            return $this->admin_show_user($user);
-        }
+
         $resource = [];
         $resource_relations = [];
 
@@ -126,7 +129,6 @@ class UserController extends Controller
 
         $resource = $user;
         $resource_relations['comments'] = $user->comments()
-            ->withTrashed()
 
             ->get()->map(function ($comment) {
                 if ($comment->commentable_type == Comment::class) {
@@ -137,6 +139,12 @@ class UserController extends Controller
                 }
                 return $comment;
             });
+
+        $bookmarks = $user->bookmarks(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
+            ->with(['category:id,name', 'user:id,name'])
+            ->withCount('comments')
+            ->orderBy('publishing_date', 'desc')
+            ->get();
 
         $latest = $user->articles(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
             ->withTrashed()
@@ -153,7 +161,6 @@ class UserController extends Controller
                 ->get();
         } else {
             $articles = $user->articles(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
-                ->withTrashed()
 
                 ->with(['category:id,name', 'user:id,name'])
 
@@ -162,6 +169,7 @@ class UserController extends Controller
         }
 
         $resource_relations['articles'] = $articles;
+        $resource_relations['bookmarks'] = $bookmarks;
         $resource_relations['latest_article'] = $latest;
 
         return Response::json([
@@ -178,6 +186,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+
+
         $this->authorize('delete', $user);
 
         foreach ($user->articles()->get() as $article) {
@@ -210,9 +220,17 @@ class UserController extends Controller
 
     public function make_admin(User $user)
     {
+
+
+        $this->authorizeForUser(Auth::user(), 'make_admin');
+
+
+
+
         $user->role = 'admin';
         $user->save();
 
+        activity()->performedOn($user)->log('made_user_admin');
 
         return Response::json([
             'msg' => 'success'

@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
+use Spatie\Activitylog\Models\Activity;
 
 class AdminController extends Controller
 {
@@ -87,7 +88,11 @@ class AdminController extends Controller
     }
     public function save_featured_order(Request $request)
     {
-
+        // if (Auth::user()->cant('update', Article::class)) {
+        //     return Response::json([
+        //         'msg' => 'Bad request. Unathorized.',
+        //     ], 401);
+        // }
         $articles_ids = $request->all();
 
         $articles = [];
@@ -106,21 +111,68 @@ class AdminController extends Controller
                 $article['meta_is-feature'] = 'true';
                 $article['meta_list_place'] = array_search($article->id, $articles_ids) + 1;
                 $article->save();
+                activity()->performedOn($article)->log('changed_order');
             }
 
             $articles = $selected_articles_with_order;
 
             // $articles = Article::whereIn('id', $articles_ids)->update(['meta_is-feature' => true, 'meta_list_place' => null]);
 
+            return Response::json([
+                'request' => $articles->map->only(['id', 'meta_is-feature', 'meta_list_place'])
+            ], 200);
         }
 
+
+        return Response::json([
+            'msg' => 'Bad request. Expected array.',
+        ], 403);
+    }
+    public function activity_log(Request $request)
+    {
+        $validated = $request->all();
+
+
+        $query = Activity::select(['id', 'description', 'causer_id', 'causer_type', 'subject_id', 'subject_type', 'created_at', 'properties'])->with('causer:id,name,role');
+
+
+
+        if (isset($validated['date_start'])) {
+
+            $date = Carbon::parse($validated['date_start'])->toDateTimeString();
+            $query = $query->where('created_at', '>=', $date);
+        }
+
+        if (isset($validated['date_end'])) {
+            $date = Carbon::parse($validated['date_end'])->setTimeFrom(Carbon::now())->toDateTimeString();
+            $query = $query->where('created_at', '<=', $date);
+        }
+
+
+        if (isset($validated['model'])) {
+            if ($validated['model'] === 'comment') {
+                $query = $query->where('subject_type', 'App\\Comment');
+            }
+            if ($validated['model'] === 'article') {
+                $query = $query->where('subject_type', 'App\\Article');
+            }
+            if ($validated['model'] === 'tag') {
+                $query = $query->where('subject_type', 'App\\Tag');
+            }
+            if ($validated['model'] === 'category') {
+                $query = $query->where('subject_type', 'App\\Category');
+            }
+            if ($validated['model'] === 'user') {
+                $query = $query->where('subject_type', 'App\\User');
+            }
+        }
+
+        $activity = $query->orderBy('created_at', 'desc')->get();
 
 
 
         return Response::json([
-            'request' => $articles->map->only(['id', 'meta_is-feature', 'meta_list_place'])
+            'resource' => $activity,
         ], 200);
     }
-
-
 }

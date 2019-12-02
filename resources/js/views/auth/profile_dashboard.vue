@@ -9,16 +9,25 @@
                 <!-- <span class="title">{{$auth.user().name}}</span> -->
             </v-col>
             <v-col cols="2">
-                <v-btn
-                    block
-                    small
-                    tile
-                    color="primary"
-                    dark
-                    v-on:click="user_settings_dialog=true"
-                >User settings</v-btn>
+                <v-menu offset-y>
+                    <template v-slot:activator="{ on }">
+                        <v-btn block small tile color="primary" dark v-on="on">
+                            User settings
+                            <v-icon right>mdi-chevron-down</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-list>
+                        <v-list-item v-on:click="user_settings_basic_dialog=true">
+                            <v-list-item-title>Name and email</v-list-item-title>
+                        </v-list-item>
+                        <v-list-item v-on:click="user_settings_password_dialog=true">
+                            <v-list-item-title>Change password</v-list-item-title>
+                        </v-list-item>
+                    </v-list>
+                </v-menu>
             </v-col>
         </v-row>
+
         <v-row
             v-if="resource_relations.articles.length != 0 || resource_relations.latest_article.length !=0"
         >
@@ -66,6 +75,43 @@
             </v-col>
             <v-col cols="12" class="text-center">
                 <p class="subtitle grey--text my-5">User hasn't posted any articles yet.</p>
+            </v-col>
+        </v-row>
+
+        <v-row v-if="resource_relations.bookmarks.length != 0">
+            <v-col cols="12">
+                <p class="pb-0 mb-0 subtitle font-weight-bold">Bookmarks</p>
+            </v-col>
+
+            <v-col cols="12">
+                <v-data-table
+                    :headers="bookmarks_headers"
+                    :items="resource_relations.bookmarks"
+                    class="elevation-1"
+                >
+                    <template v-slot:item.action="{ item }">
+                        <v-row>
+                            <v-btn tile text small v-on:click="remove_bookmark(item.id)">Remove</v-btn>
+
+                            <v-btn
+                                tile
+                                text
+                                small
+                                link
+                                :to="`/article/${item.slug}`"
+                                target="_blank"
+                            >Show</v-btn>
+                        </v-row>
+                    </template>
+                </v-data-table>
+            </v-col>
+        </v-row>
+        <v-row v-else>
+            <v-col cols="12">
+                <p class="pb-0 mb-0 subtitle font-weight-bold">Bookmarks</p>
+            </v-col>
+            <v-col cols="12" class="text-center">
+                <p class="subtitle grey--text my-5">You don't have any bookmarks.</p>
             </v-col>
         </v-row>
 
@@ -117,10 +163,10 @@
             </v-col>
         </v-row>
         <v-row justify="center">
-            <v-dialog v-model="user_settings_dialog" persistent max-width="50vw">
+            <v-dialog v-model="user_settings_basic_dialog" persistent max-width="50vw">
                 <v-card>
                     <v-card-title>
-                        <span class="headline">User settings</span>
+                        <span class="headline">Name and email</span>
                     </v-card-title>
                     <v-card-text>
                         <v-container>
@@ -147,6 +193,31 @@
                                         required
                                     ></v-text-field>
                                 </v-col>
+                            </v-row>
+                        </v-container>
+                        <small>*indicates required field</small>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn
+                            color="blue darken-1"
+                            text
+                            @click="user_settings_basic_dialog = false"
+                        >Close</v-btn>
+                        <v-btn color="blue darken-1" text @click="update_resource">Save</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+        </v-row>
+        <v-row justify="center">
+            <v-dialog v-model="user_settings_password_dialog" persistent max-width="50vw">
+                <v-card>
+                    <v-card-title>
+                        <span class="headline">Name and email</span>
+                    </v-card-title>
+                    <v-card-text>
+                        <v-container>
+                            <v-row>
                                 <v-col cols="12" class="py-0 mt-5">
                                     <p class="text-uppercase caption py-0 my-0">Change password</p>
                                 </v-col>
@@ -179,7 +250,7 @@
                         <v-btn
                             color="blue darken-1"
                             text
-                            @click="user_settings_dialog = false"
+                            @click="user_settings_password_dialog = false"
                         >Close</v-btn>
                         <v-btn color="blue darken-1" text @click="update_resource">Save</v-btn>
                     </v-card-actions>
@@ -195,7 +266,8 @@ export default {
     components: { article12main },
     data() {
         return {
-            user_settings_dialog: false,
+            user_settings_basic_dialog: false,
+            user_settings_password_dialog: false,
             password: null,
             password_r: null,
             comments_headers: [
@@ -223,10 +295,24 @@ export default {
                     value: "action"
                 }
             ],
+            bookmarks_headers: [
+                { text: "Title", value: "title" },
+                { text: "Author", value: "user.name" },
+                { text: "Category", value: "category.name" },
+                { text: "Comments No.", value: "comments_count" },
+                // { text: "Slug", value: "slug" },
+                {
+                    text: "Action",
+                    // align: "right",
+                    sortable: false,
+                    value: "action"
+                }
+            ],
             edit_resource: {},
             resource: {},
             resource_relations: {
                 latest_article: [],
+                bookmarks: [],
                 articles: [],
                 comments: []
             },
@@ -239,7 +325,53 @@ export default {
         }
     },
     methods: {
-        update_resource: function() {
+        update_resource_password: function() {
+            let currentObj = this;
+
+            if (currentObj.password != currentObj.password_r) {
+                alert("Password does not match!");
+                return;
+            }
+
+            let data = {};
+            Object.keys(currentObj.edit_resource).forEach(function(prop) {
+                if (
+                    currentObj.edit_resource[prop] != "" ||
+                    currentObj.edit_resource[prop] != null
+                ) {
+                    data[prop] = currentObj.edit_resource[prop];
+                }
+            });
+
+            if (data["email"] == currentObj.resource.email) {
+                delete data["email"];
+            }
+            if (currentObj.password != null || currentObj.password != "") {
+                data["password"] = currentObj.password;
+            }
+            console.log(data);
+            axios
+                .put(`/auth/edit/${currentObj.resource.id}`, data)
+                .then(function(resp) {
+                    currentObj.saving_errors = [];
+                    currentObj.resource = resp.data.user;
+
+                    /* Using JSON.parse to copy object, since just asignin resp.data.note only references data
+                    note end edit_note keep changing when used as vue v-model
+                    Based on: https://scotch.io/bar-talk/copying-objects-in-javascript
+                     */
+                    currentObj.edit_resource = JSON.parse(
+                        JSON.stringify(resp.data.user)
+                    );
+                    currentObj.user_settings_dialog = false;
+                    // currentObj.user_settings_dialog = false;
+                })
+                .catch(function(resp) {
+                    currentObj.saving_errors = resp.response.data.errors;
+                    console.log(resp);
+                });
+        },
+        update_resource_basic: function() {
             let currentObj = this;
 
             if (currentObj.password != currentObj.password_r) {
@@ -291,7 +423,7 @@ export default {
             if (confirm("Confirm comment deletion!") === false) {
                 return;
             }
-            axios(`/comment/${comment_id}`, {
+            axios(`/auth/comment/${comment_id}`, {
                 method: "delete"
             })
                 .then(function(resp) {
@@ -303,6 +435,23 @@ export default {
                 })
                 .catch(function(resp) {
                     alert("Comment not deleted!");
+                });
+        },
+        remove_bookmark(article_id) {
+            let currentObj = this;
+
+            axios
+                .post("/auth/toggle_bookmark", { article_id: article_id })
+                .then(function(resp) {
+                    currentObj.resource_relations.bookmarks = currentObj.resource_relations.bookmarks.filter(
+                        article => article.id !== article_id
+                    );
+                    currentObj.$auth.user().bookmarks = currentObj.$auth
+                        .user()
+                        .bookmarks.filter(bm => bm !== article_id);
+                })
+                .catch(function(resp) {
+                    console.log(resp);
                 });
         }
     },

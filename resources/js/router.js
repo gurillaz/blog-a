@@ -21,6 +21,7 @@ import AdminFeaturedOrder from './views/admin/admin_featured_order.vue';
 import AdminUser from './views/admin/admin_user.vue';
 
 import AdminArticle from './views/admin/admin_article.vue';
+import AdminActivity from './views/admin/admin_activity.vue';
 
 
 // Guest pages
@@ -248,6 +249,10 @@ const router = new VueRouter({
                     path: 'featured_order',
                     name: 'admin.featured_order',
                     component: AdminFeaturedOrder,
+                }, {
+                    path: 'activity',
+                    name: 'admin.activity',
+                    component: AdminActivity,
                 },
             ]
         },

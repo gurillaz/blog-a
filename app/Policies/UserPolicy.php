@@ -17,7 +17,9 @@ class UserPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        
+        return $user->role === 'admin';
+        
     }
 
     /**
@@ -29,7 +31,8 @@ class UserPolicy
      */
     public function view(User $user, User $model)
     {
-        //
+        return $user->role === 'admin';
+        
     }
 
     /**
@@ -52,7 +55,7 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        //
+        return $user->id === $model->id;
     }
 
     /**
@@ -64,7 +67,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model)
     {
-        return $user->role ==='admin';
+        return $user->role === 'admin';
     }
 
     /**
@@ -76,7 +79,7 @@ class UserPolicy
      */
     public function restore(User $user, User $model)
     {
-        //
+        return $user->role === 'admin';
     }
 
     /**
@@ -88,6 +91,28 @@ class UserPolicy
      */
     public function forceDelete(User $user, User $model)
     {
-        //
+        return $user->role === 'admin';
+    }
+
+
+    /**
+     * Determine whether the user can make another user admin.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function make_admin(User $user)
+    {
+        return $user->role === 'admin';
+    }
+    /**
+     * Determine whether the user can view another user as admin.
+     *
+     * @param  \App\User  $user
+     * @return mixed
+     */
+    public function admin_show_user(User $user)
+    {
+        return $user->role === 'admin';
     }
 }

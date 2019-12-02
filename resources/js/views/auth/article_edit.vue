@@ -27,7 +27,7 @@
         drag: 'Drag here or click to upload article cover photo'
       }"
                                     name="image"
-                                    :alertOnError="false" 
+                                    :alertOnError="false"
                                 ></picture-input>
                             </form>
                             <!-- <strong class="red--text caption" v-if="saving_errors.cover_photo!=undefined">{{saving_errors.cover_photo}}</strong> -->
@@ -91,7 +91,7 @@
                             v-if="saving_errors.body!=undefined"
                         >{{saving_errors.body}}</strong>
                     </div>
-                    <v-card outlined tile>
+                    <v-card outlined tile class="mx-5">
                         <!-- <v-card-title class="pt-1 pl-2">Article</v-card-title> -->
 
                         <!-- <v-row class="pa-7"> -->

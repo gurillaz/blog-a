@@ -33,7 +33,6 @@
                     >
                         <template v-slot:item.action="{ item }">
                             <v-row class="text-right">
-
                                 <!-- <v-btn tile text small v-on:click="alert('edit')">Edit</v-btn> -->
 
                                 <v-btn tile text small link :to="`/admin/user/${item.id}`">Show</v-btn>
@@ -159,8 +158,7 @@ export default {
                 currentObj.pageCount = resp.data.data.last_page;
                 currentObj.itemsPerPage = resp.data.data.per_page;
                 currentObj.page = resp.data.data.current_page;
-
-                // console.log(currentObj.pageCount);
+// console.log(currentObj.pageCount);
             })
             .catch(function(resp) {
                 console.log(resp);

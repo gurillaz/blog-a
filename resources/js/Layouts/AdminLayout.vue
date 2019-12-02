@@ -4,7 +4,9 @@
             <v-list>
                 <v-list-item class="mb-12">
                     <v-list-item-content class="text-center">
-                        <h1 class="title"><router-link to="/">Blog-a</router-link></h1>
+                        <h1 class="title">
+                            <router-link to="/">Blog-a</router-link>
+                        </h1>
 
                         <v-list-item-subtitle>Admin dashbard</v-list-item-subtitle>
                     </v-list-item-content>
@@ -36,7 +38,7 @@
                     <v-divider></v-divider>
                     <v-list-item to="/admin/pending_articles">
                         <v-list-item-icon>
-                            <v-icon>mdi-home</v-icon>
+                            <v-icon>mdi-newspaper-minus</v-icon>
                         </v-list-item-icon>
 
                         <v-list-item-content>
@@ -45,7 +47,7 @@
                     </v-list-item>
                     <v-list-item to="/admin/pending_comments">
                         <v-list-item-icon>
-                            <v-icon>mdi-home</v-icon>
+                            <v-icon>mdi-comment-alert</v-icon>
                         </v-list-item-icon>
 
                         <v-list-item-content>
@@ -54,7 +56,7 @@
                     </v-list-item>
                     <v-list-item to="/admin/featured_order">
                         <v-list-item-icon>
-                            <v-icon>mdi-newspaper</v-icon>
+                            <v-icon>mdi-sort-numeric</v-icon>
                         </v-list-item-icon>
 
                         <v-list-item-content>
@@ -109,13 +111,31 @@
                             <v-list-item-title>Tags</v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
+                    <v-list-item to="/admin/activity">
+                        <v-list-item-icon>
+                            <v-icon>mdi-history</v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                            <v-list-item-title>Activity Log</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    <v-list-item to="/admin/export">
+                        <v-list-item-icon>
+                            <v-icon>mdi-database-export</v-icon>
+                        </v-list-item-icon>
+
+                        <v-list-item-content>
+                            <v-list-item-title>Export Data</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
                 </v-list-item-group>
             </v-list>
         </v-navigation-drawer>
 
         <v-app-bar app color="transparent" flat>
             <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-            <!-- <v-toolbar-title>Admin Dashboard</v-toolbar-title> -->
+            <router-link class="ml-auto mr-5" to="/">Got to homepage</router-link>
         </v-app-bar>
 
         <v-content>

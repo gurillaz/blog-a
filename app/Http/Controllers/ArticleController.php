@@ -141,7 +141,7 @@ class ArticleController extends Controller
 
 
         $resource = $article;
-        $resource['user'] = $article->user()->get(['id', 'name']);
+        $resource['user'] = $article->user()->first(['id', 'name']);
         $resource['category'] = $article->category()->first(['id', 'name']);
 
         $resource['tags'] = $article->tags()->get(['id', 'name']);
@@ -159,12 +159,17 @@ class ArticleController extends Controller
      */
     public function show_slug($slug)
     {
-        $article = Article::withTrashed()->where('slug', $slug)->first();
+        $article = Article::where('slug', $slug)->first();
+
+
         if ($article == null) {
             return Response::json([
                 'msg' => "Resource not found"
             ], 404);
         }
+
+
+
         $this->authorize('view', $article);
 
         $resource = [];
@@ -172,7 +177,7 @@ class ArticleController extends Controller
 
 
         $resource = $article;
-        $resource['user'] = $article->user()->get(['id', 'name']);
+        $resource['user'] = $article->user()->first(['id', 'name']);
         $resource['category'] = $article->category()->first(['id', 'name']);
 
         $resource['comments'] = $article->comments()->with("user:id,name,role")->with('replies.user')->get();
@@ -195,7 +200,7 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        // $this->authorize('edit', $article);
+        $this->authorize('edit', $article);
 
         $resource = [];
         $resource_relations = [];
@@ -328,8 +333,11 @@ class ArticleController extends Controller
 
         $article->meta_status = "published";
         $article->publishing_date = Carbon::now()->toDateTimeString();
+        $article->save();
 
 
+
+        activity()->performedOn($article)->log('aproved');
 
         return Response::json([
             'msg' => "success"
@@ -340,6 +348,9 @@ class ArticleController extends Controller
         //TODO set this to denied
         $article->meta_status = "deleted";
         $article->publishing_date = NULL;
+        $article->save();
+
+        activity()->performedOn($article)->log('denied');
 
 
 
@@ -354,8 +365,10 @@ class ArticleController extends Controller
         foreach ($articles as $article) {
             $article->meta_status = "published";
             $article->publishing_date = Carbon::now()->toDateTimeString();
+            $article->save();
         };
 
+        activity()->log('aproved_all_articles');
 
 
 

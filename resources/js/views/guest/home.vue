@@ -1,13 +1,16 @@
 <template>
     <div>
-        <v-row>
+        <v-row v-if="resources.main_featured.length!=0">
             <v-col cols="12">
                 <p class="pb-0 mb-0 headline font-weight-bold">Featured</p>
             </v-col>
-            <v-col cols="12" v-for="(article,index) in resources.latest_featured" :key="index">
+            <v-col cols="12" v-for="(article,index) in resources.main_featured" :key="index">
                 <article12main :article="article"></article12main>
             </v-col>
-            <v-col cols="4" v-for="(article,index) in resources.others_featured" :key="index">
+        </v-row>
+
+        <v-row v-if="resources.three_main_featured.length!=0">
+            <v-col cols="4" v-for="(article,index) in resources.three_main_featured" :key="index">
                 <article4 :article="article"></article4>
             </v-col>
             <!-- <h5>{{resources.featured[0].image_path}}</h5> -->
@@ -15,7 +18,16 @@
             <!-- <img src="/storage/images/1af961ba8b8a3955855f89932209a75e.jpg" alt=""> -->
             <!-- C:\Users\ThinkPad T440\Documents\Code\blog-a\public\storage\images\c4f354a1d9a3bfb87ec0e7c49865bcd6.jpg -->
         </v-row>
-        <v-row>
+        <v-row v-if="resources.others_featured.length!=0">
+            <v-col cols="12">
+                <p class="pb-0 mb-0 headline font-weight-bold">Others featured</p>
+            </v-col>
+            <v-col v-for="(article,index) in resources.others_featured" :key="index" cols="12">
+                <article12 :article="article"></article12>
+            </v-col>
+        </v-row>
+
+        <v-row v-if="resources.latest.length!=0">
             <v-col cols="12">
                 <p class="pb-0 mb-0 headline font-weight-bold">Latest</p>
             </v-col>
@@ -23,6 +35,14 @@
                 <article12 :article="article"></article12>
             </v-col>
         </v-row>
+        <v-row v-else>
+            <v-col cols="12" class="text-center">
+                <p
+                    class="pb-0 mb-0 header font-weight-bold"
+                >There are not any articles published right now. Check later!</p>
+            </v-col>
+        </v-row>
+
         <v-row>
             <v-col cols="12">
                 <p class="pb-0 mb-0 headline font-weight-bold">Categories</p>
@@ -67,7 +87,13 @@ export default {
     components: { article12, article4, article12main },
     data() {
         return {
-            resources: []
+            resources: {
+                main_featured:[],
+                three_main_featured:[],
+                others_featured:[],
+                latest:[],
+                categories:[],
+            }
         };
     },
     methods: {},

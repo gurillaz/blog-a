@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Comment;
 use App\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Support\Facades\Auth;
 
 class CommentPolicy
 {
@@ -18,7 +19,7 @@ class CommentPolicy
      */
     public function viewAny(User $user)
     {
-        //
+        return $user->role =='admin';
     }
 
     /**
@@ -41,7 +42,7 @@ class CommentPolicy
      */
     public function create(User $user)
     {
-        //
+
     }
 
     /**
@@ -53,7 +54,7 @@ class CommentPolicy
      */
     public function update(User $user, Comment $comment)
     {
-        //
+        return $user->id == $comment->user_id;
     }
 
     /**

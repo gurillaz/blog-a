@@ -16,24 +16,31 @@ class GuestController extends Controller
 {
     public function home()
     {
-        $latest_featured = Article::select(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
+        $main_featured = Article::select(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
 
-            ->where('meta_is-feature', 'true')
+            ->where('meta_list_place', 1)
             ->where('meta_status', 'published')
             ->with(['category:id,name', 'user:id,name'])
             ->withCount('comments')
-            ->orderBy('publishing_date', 'desc')->take(1)
+            ->get();
+        $three_main_featured = Article::select(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
+
+            ->whereIn('meta_list_place', [2, 3, 4])
+            ->where('meta_status', 'published')
+            ->with(['category:id,name', 'user:id,name'])
+            ->withCount('comments')
+            ->orderBy('meta_list_place', 'desc')
+
             ->get();
 
         $others_featured = Article::select(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', "publishing_date", 'user_id'])
 
-            ->where('id', '!=', $latest_featured[0]->id)
-            ->where('meta_is-feature', 'true')
+            ->where('meta_list_place', '>', 4)
             ->where('meta_status', 'published')
             ->with(['category:id,name', 'user:id,name'])
             ->withCount('comments')
-
-            ->orderBy('publishing_date', 'desc')->take(3)
+            ->orderBy('meta_list_place', 'desc')
+            ->take(5)
             ->get();
 
 
@@ -50,8 +57,11 @@ class GuestController extends Controller
         // $latest = Article::where('met')orderBy('publishing_date','desc')->take('10')->get();
 
         $resources = [];
-        $resources['latest_featured'] = $latest_featured;
+        $resources['main_featured'] = $main_featured;
+        $resources['three_main_featured'] = $three_main_featured;
         $resources['others_featured'] = $others_featured;
+
+
         $resources['latest'] = $latest;
         $resources['categories'] = $categories;
 

@@ -10,6 +10,8 @@ class ArticlePolicy
 {
     use HandlesAuthorization;
 
+    
+
     /**
      * Determine whether the user can view any articles.
      *
@@ -30,9 +32,7 @@ class ArticlePolicy
      */
     public function view(?User $user, Article $article)
     {
-        if ($article->deleted_at != null) {
-            return $article->user_id == $user->id || $user->role == 'admin';
-        }
+
         if ($article->meta_status != 'published') {
             return $article->user_id == $user->id || $user->role == 'admin';
         }
@@ -59,7 +59,7 @@ class ArticlePolicy
      */
     public function update(User $user, Article $article)
     {
-        return $user->role == 'admin' || $user->id == $article->user_id;
+        return $user->id == $article->user_id;
     }
 
     /**
@@ -100,4 +100,7 @@ class ArticlePolicy
         return $user->role == 'admin';
         
     }
+
+
+    
 }

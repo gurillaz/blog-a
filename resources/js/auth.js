@@ -40,7 +40,7 @@ const config = {
         enabled: true
     },
     refreshData: {
-        url: '/auth/refresh',
+        url: '/guest/refresh',
         method: 'GET',
         enabled: true,
         interval: 30

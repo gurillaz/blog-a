@@ -444,7 +444,7 @@ export default {
 
             axios
                 .put(
-                    `/comment/${currentObj.edit_comment.id}`,
+                    `/auth/comment/${currentObj.edit_comment.id}`,
                     currentObj.edit_comment
                 )
                 .then(function(resp) {
@@ -474,7 +474,7 @@ export default {
 
             axios
                 .put(
-                    `/comment/${currentObj.edit_comment.id}`,
+                    `/auth/comment/${currentObj.edit_comment.id}`,
                     currentObj.edit_comment
                 )
                 .then(function(resp) {
@@ -508,7 +508,7 @@ export default {
             // alert(currentObj.new_comment);
 
             axios
-                .post(`/comment`, currentObj.new_comment)
+                .post(`/auth/comment`, currentObj.new_comment)
                 .then(function(resp) {
                     // currentObj.saving_errors = false;
 
@@ -540,7 +540,7 @@ export default {
             // alert(currentObj.new_comment);
 
             axios
-                .post(`/comment`, currentObj.new_reply)
+                .post(`/auth/comment`, currentObj.new_reply)
                 .then(function(resp) {
                     // currentObj.saving_errors = false;
                     // console.log(resp.data.comment)
@@ -569,13 +569,13 @@ export default {
             if (confirm("Delete comment?") === false) {
                 return;
             }
-            axios(`/comment/${reply_id}`, {
+            axios(`/auth/comment/${reply_id}`, {
                 method: "delete"
             })
                 .then(function(resp) {
                     let comment = currentObj.resource.comments
                         .filter(comment => comment.id == parent_comment_id)[0]
-                        .replies.filter(rep => rep.id == reply_id);
+                        .replies.filter(rep => rep.id == reply_id)[0];
                     comment.user = null;
                     comment.body = "[Deleted]";
                 })
@@ -588,7 +588,7 @@ export default {
             if (confirm("Delete comment?") === false) {
                 return;
             }
-            axios(`/comment/${deleted_comment_id}`, {
+            axios(`/auth/comment/${deleted_comment_id}`, {
                 method: "delete"
             })
                 .then(function(resp) {

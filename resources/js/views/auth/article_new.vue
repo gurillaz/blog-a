@@ -71,7 +71,7 @@
                         </v-col>
                         <!-- <v-col cols="3">
                             <v-btn block outlined small class="mt-5">Add new tag</v-btn>
-                        </v-col> -->
+                        </v-col>-->
                         <v-col cols="12">
                             <v-textarea
                                 v-model="new_article.summary"
@@ -90,7 +90,7 @@
                             v-if="saving_errors.body!=undefined"
                         >{{saving_errors.body}}</strong>
                     </div>
-                    <v-card outlined tile>
+                    <v-card outlined tile class="mx-5">
                         <!-- <v-card-title class="pt-1 pl-2">Article</v-card-title> -->
 
                         <!-- <v-row class="pa-7"> -->
@@ -108,13 +108,12 @@
                         <!-- <div v-html="new_article.body"></div> -->
                         <!-- </v-row> -->
                     </v-card>
-
                 </v-container>
             </v-row>
             <v-row class="mx-5">
                 <v-col cols="12">
                     <v-btn
-                    tile
+                        tile
                         :loading="loading"
                         color="primary"
                         block
@@ -238,7 +237,9 @@ export default {
                 .then(function(resp) {
                     currentObj.loading = false;
                     // console.log(this.data.resource_id);
-                    currentObj.$router.push('/article/'+resp.data.resource_slug)
+                    currentObj.$router.push(
+                        "/article/" + resp.data.resource_slug
+                    );
                 })
                 .catch(function(resp) {
                     currentObj.loading = false;

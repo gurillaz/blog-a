@@ -308,7 +308,7 @@ export default {
     beforeMount: function() {
         let currentObj = this;
         axios
-            .get(`/user/${currentObj.id}`)
+            .get(`/admin/article/${currentObj.id}`)
             .then(function(resp) {
                 currentObj.resource = resp.data.resource;
 

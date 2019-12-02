@@ -26,8 +26,11 @@ class CommentController extends Controller
      */
     public function index()
     {
+        // $this->authorize('index');
+
+
+
         $comments = Comment::query()
-            ->withTrashed()
             ->with('user:id,name')
 
             ->paginate(10);
@@ -44,13 +47,9 @@ class CommentController extends Controller
             return $comment;
         });
 
-
-        return response()->json(
-            [
-                'data' => $comments,
-            ],
-            200
-        );
+        return Response::json([
+            'comments' => $comments,
+        ], 200);
     }
 
     /**
@@ -71,12 +70,9 @@ class CommentController extends Controller
      */
     public function store(CreateCommentRequest $request)
     {
+        // $this->authorize('create');
         $validated = $request->validated();
-        if ($validated['user_id'] != Auth::id()) {
-            return Response::json([
-                'message' => "Not authorized! Forbiden!"
-            ], 403);
-        }
+
         //        return $validated;
         $comment = new Comment();
 
@@ -103,15 +99,8 @@ class CommentController extends Controller
      * @param  \App\Comment  $comment
      * @return \Illuminate\Http\Response
      */
-    public function show($comment_id)
+    public function show(Comment $comment)
     {
-        $comment = Comment::withTrashed()->find($comment_id);
-
-        if ($comment == null) {
-            return Response::json([
-                'message' => 'Resource not found',
-            ], 404);
-        }
 
 
 
@@ -151,6 +140,9 @@ class CommentController extends Controller
      */
     public function update(UpdateCommentRequest $request, Comment $comment)
     {
+        $this->authorize('update', $comment);
+
+
         $validated = $request->validated();
 
         $comment->body = $validated['body'];
@@ -242,9 +234,11 @@ class CommentController extends Controller
     {
 
         $comment->meta_status = "published";
-
-
-
+        $comment->save();
+        
+        
+        activity()->performedOn($comment)->log('aproved');
+        
         return Response::json([
             'msg' => "success"
         ], 200);
@@ -253,7 +247,9 @@ class CommentController extends Controller
     {
         //TODO set this to denied
         $comment->meta_status = "deleted";
+        $comment->save();
         // $article->publishing_date = NULL;
+        activity()->performedOn($comment)->log('denied');
 
 
 
@@ -267,8 +263,10 @@ class CommentController extends Controller
         //TODO set this to denied
         foreach ($comments as $comment) {
             $comment->meta_status = "published";
+            $comment->save();
         };
 
+        activity()->log('aproved_all_comments');
 
 
 
