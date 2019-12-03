@@ -37,7 +37,7 @@ class UpdateCategoryRequest extends FormRequest
 
 
 
-            'name' => 'required|string|min:3|max:100|unique:categories,name',
+            'name' => 'sometimes|required|string|min:3|max:100|unique:categories,name',
 
             'description' => 'max:5000',
 

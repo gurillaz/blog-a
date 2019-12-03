@@ -37,7 +37,7 @@ class UpdateCommentRequest extends FormRequest
 
 
 
-            'body'=>'required|max:5000',
+            'body'=>'required|max:5000|',
 
 
         ];

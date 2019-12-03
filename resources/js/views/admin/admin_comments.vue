@@ -106,7 +106,7 @@ export default {
                 { text: "Comment", value: "comment_body" },
                 { text: "Article", value: "article_title" },
                 { text: "User", value: "user.name" },
-                { text: "Date", value: "updated_at" },
+                { text: "Date", value: "created_at" },
                 { text: "Status", value: "meta_status" },
                 {
                     text: "Action",

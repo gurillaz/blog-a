@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Article;
 use App\Category;
 use App\Comment;
+use App\Http\Requests\SearchRequest;
 use App\Tag;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
@@ -89,58 +91,63 @@ class GuestController extends Controller
 
 
 
-    public function get_results(Request $request)
+    public function get_search_results(SearchRequest $request)
     {
-        $validated = $request;
+        $validated = $request->validated();
         $query = Article::select([
             'articles.id', 'slug', 'summary', 'title', 'image_path', 'publishing_date', 'category_id', 'articles.user_id',
             'users.name as user_name', 'categories.name as category_name'
         ])
 
+            ->where('meta_status', 'published')
 
             ->join('users', 'users.id', '=', 'articles.user_id')
             ->join('categories', 'categories.id', '=', 'articles.category_id')
             ->with(['category:id,name', 'user:id,name'])
             ->withCount('comments');
         // ->where('meta_status', 'published');
-        if ($validated->get('search_term') != null) {
-            $query = $query->where('title', 'LIKE', '%' . $validated->get('search_term') . '%');
-            $query = $query->where('body', 'LIKE', '%' . $validated->get('search_term') . '%');
-            $query = $query->where('summary', 'LIKE', '%' . $validated->get('search_term') . '%');
+        if (isset($validated['search_term'])) {
+            $query = $query->where('title', 'LIKE', '%' . $validated['search_term'] . '%');
+            $query = $query->orWhere('body', 'LIKE', '%' . $validated['search_term'] . '%');
+            $query = $query->orWhere('summary', 'LIKE', '%' . $validated['search_term'] . '%');
         }
-        if ($validated->get('user_id') != null) {
-            $query = $query->where('articles.user_id', $validated->get('user_id'));
+        if (isset($validated['user_id'])) {
+
+            $query = $query->where('articles.user_id', $validated['user_id']);
         }
-        if ($validated->get('category_id') != null) {
-            $query = $query->where('articles.category_id', $validated->get('category_id'));
+        if (isset($validated['category_id'])) {
+
+            $query = $query->where('articles.category_id', $validated['category_id']);
         }
-        if ($validated->get('date_start') != null) {
-            $date = Carbon::parse($validated->get('date_start'))->toDateTimeString();
+        if (isset($validated['date_start'])) {
+            $date = Carbon::parse($validated['date_start'])->toDateTimeString();
             $query = $query->where('publishing_date', '>=', $date);
         }
 
-        if ($validated->get('date_end') != null) {
-            $date = Carbon::parse($validated->get('date_end'))->toDateTimeString();
+        if (isset($validated['date_end'])) {
+            $date_end = Carbon::parse($validated['date_end'])->setTimeFrom(Carbon::now())->toDateTimeString();
             $query = $query->where('publishing_date', '<=', $date);
         }
-        if ($validated->get('tags') != null && is_array($validated->get('tags'))) {
-            $tags = $validated->get('tags');
+        if (isset($validated['tags'])) {
+
+            $tags = $validated['tags'];
             $query = $query->whereHas('tags', function (Builder $q) use ($tags) {
                 $q->whereIn('id', $tags);
             });
         }
 
 
-        if ($validated->get('sort_by') != null) {
-            if ($validated->get('sort_by') == 'title') {
+        if (isset($validated['sort_by'])) {
+
+            if ($validated['sort_by'] == 'title') {
                 $query->orderBy('title', 'asc');
-            } elseif ($validated->get('sort_by') == 'publishing_date') {
+            } elseif ($validated['sort_by'] == 'publishing_date') {
                 $query->orderBy('publishing_date', 'desc');
-            } elseif ($validated->get('sort_by') == 'comments_count') {
+            } elseif ($validated['sort_by'] == 'comments_count') {
                 $query->orderBy('comments_count', 'desc');
-            } elseif ($validated->get('sort_by') == 'user_name') {
+            } elseif ($validated['sort_by'] == 'user_name') {
                 $query->orderBy('user_name', 'asc');
-            } elseif ($validated->get('sort_by') == 'category_name') {
+            } elseif ($validated['sort_by'] == 'category_name') {
                 $query->orderBy('category_name', 'asc');
             } else {
                 $query->orderBy('title', 'desc');

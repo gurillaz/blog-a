@@ -53,7 +53,7 @@
                 >
                     <template v-slot:item.action="{ item }">
                         <v-row>
-                            <v-btn tile text small v-on:click="alert('edit')">Delete</v-btn>
+                            <v-btn tile text small v-on:click="delete_article(item.id)">Delete</v-btn>
                             <v-btn tile text small :to="`/article/${item.id}/edit`">Edit</v-btn>
 
                             <v-btn
@@ -178,7 +178,6 @@
                                     <v-text-field
                                         v-model="edit_resource.name"
                                         label="Name*"
-                                        :error="saving_errors.name != undefined"
                                         :error-messages="saving_errors.name"
                                         required
                                     ></v-text-field>
@@ -190,6 +189,7 @@
                                         label="Email*"
                                         :error="saving_errors.email != undefined"
                                         :error-messages="saving_errors.email"
+                                        :disabled="true"
                                         required
                                     ></v-text-field>
                                 </v-col>
@@ -204,7 +204,7 @@
                             text
                             @click="user_settings_basic_dialog = false"
                         >Close</v-btn>
-                        <v-btn color="blue darken-1" text @click="update_resource">Save</v-btn>
+                        <v-btn color="blue darken-1" text v-on:click="update_resource_basic()">Save</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -223,22 +223,18 @@
                                 </v-col>
                                 <v-col cols="12" class="pt-0">
                                     <v-text-field
-                                        label="Passwoord:"
+                                        label="Password:"
                                         v-model="password"
                                         type="password"
-                                        :error="saving_errors.password != undefined"
                                         :error-messages="saving_errors.password"
                                     ></v-text-field>
                                 </v-col>
                                 <v-col cols="12" class="pt-0">
                                     <v-text-field
-                                        label="Repeat password:"
+                                        label="Password confirmation:"
                                         v-model="password_r"
                                         type="password"
-                                        :error="password_error"
-                                        :error-messages="password_error?'Password does not match!':''"
-                                        :success-messages="!password_error && password_r!=null?'Password does match!':''"
-                                        :success="password_r!=null && password==password_r"
+                                        :error-messages="saving_errors.password_r"
                                     ></v-text-field>
                                 </v-col>
                             </v-row>
@@ -252,7 +248,11 @@
                             text
                             @click="user_settings_password_dialog = false"
                         >Close</v-btn>
-                        <v-btn color="blue darken-1" text @click="update_resource">Save</v-btn>
+                        <v-btn
+                            color="blue darken-1"
+                            text
+                            v-on:click="update_resource_password()"
+                        >Save</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-dialog>
@@ -325,79 +325,35 @@ export default {
         }
     },
     methods: {
-        update_resource_password: function() {
+        update_resource_password() {
             let currentObj = this;
-
-            if (currentObj.password != currentObj.password_r) {
-                alert("Password does not match!");
-                return;
-            }
+            currentObj.saving_errors = [];
 
             let data = {};
-            Object.keys(currentObj.edit_resource).forEach(function(prop) {
-                if (
-                    currentObj.edit_resource[prop] != "" ||
-                    currentObj.edit_resource[prop] != null
-                ) {
-                    data[prop] = currentObj.edit_resource[prop];
-                }
-            });
+            data["password"] = currentObj.password;
+            data["password_r"] = currentObj.password_r;
 
-            if (data["email"] == currentObj.resource.email) {
-                delete data["email"];
-            }
-            if (currentObj.password != null || currentObj.password != "") {
-                data["password"] = currentObj.password;
-            }
-            console.log(data);
             axios
-                .put(`/auth/edit/${currentObj.resource.id}`, data)
+                .put(`/auth/update_password`, data)
                 .then(function(resp) {
                     currentObj.saving_errors = [];
-                    currentObj.resource = resp.data.user;
 
-                    /* Using JSON.parse to copy object, since just asignin resp.data.note only references data
-                    note end edit_note keep changing when used as vue v-model
-                    Based on: https://scotch.io/bar-talk/copying-objects-in-javascript
-                     */
-                    currentObj.edit_resource = JSON.parse(
-                        JSON.stringify(resp.data.user)
-                    );
-                    currentObj.user_settings_dialog = false;
-                    // currentObj.user_settings_dialog = false;
+                    currentObj.user_settings_password_dialog = false;
                 })
                 .catch(function(resp) {
                     currentObj.saving_errors = resp.response.data.errors;
                     console.log(resp);
                 });
         },
-        update_resource_basic: function() {
+        update_resource_basic() {
             let currentObj = this;
-
-            if (currentObj.password != currentObj.password_r) {
-                alert("Password does not match!");
-                return;
-            }
+            currentObj.saving_errors = [];
 
             let data = {};
-            Object.keys(currentObj.edit_resource).forEach(function(prop) {
-                if (
-                    currentObj.edit_resource[prop] != "" ||
-                    currentObj.edit_resource[prop] != null
-                ) {
-                    data[prop] = currentObj.edit_resource[prop];
-                }
-            });
 
-            if (data["email"] == currentObj.resource.email) {
-                delete data["email"];
-            }
-            if (currentObj.password != null || currentObj.password != "") {
-                data["password"] = currentObj.password;
-            }
-            console.log(data);
+            data["name"] = currentObj.edit_resource.name;
             axios
-                .put(`/auth/edit/${currentObj.resource.id}`, data)
+                .put(`/auth/update_name`, data)
                 .then(function(resp) {
                     currentObj.saving_errors = [];
                     currentObj.resource = resp.data.user;
@@ -409,7 +365,7 @@ export default {
                     currentObj.edit_resource = JSON.parse(
                         JSON.stringify(resp.data.user)
                     );
-                    currentObj.user_settings_dialog = false;
+                    currentObj.user_settings_basic_dialog = false;
                     // currentObj.user_settings_dialog = false;
                 })
                 .catch(function(resp) {
@@ -435,6 +391,26 @@ export default {
                 })
                 .catch(function(resp) {
                     alert("Comment not deleted!");
+                });
+        },
+        delete_article(article_id) {
+            let currentObj = this;
+
+            if (confirm("Confirm article deletion!") === false) {
+                return;
+            }
+            axios(`/auth/article/${article_id}`, {
+                method: "delete"
+            })
+                .then(function(resp) {
+                    currentObj.resource_relations.articles = currentObj.resource_relations.articles.filter(
+                        article => article.id != article_id
+                    );
+
+                    alert("Article deleted!");
+                })
+                .catch(function(resp) {
+                    alert("Article not deleted!");
                 });
         },
         remove_bookmark(article_id) {

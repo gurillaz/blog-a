@@ -19,7 +19,7 @@ class CommentPolicy
      */
     public function viewAny(User $user)
     {
-        return $user->role =='admin';
+        return $user->role == 'admin';
     }
 
     /**
@@ -41,9 +41,7 @@ class CommentPolicy
      * @return mixed
      */
     public function create(User $user)
-    {
-
-    }
+    { }
 
     /**
      * Determine whether the user can update the Comment.

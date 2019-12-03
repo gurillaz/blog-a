@@ -6,6 +6,7 @@ use App\Article;
 use App\Comment;
 use App\Exports\CommentsExport;
 use App\Http\Requests\CreateCommentRequest;
+use App\Http\Requests\ExportRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -33,6 +34,7 @@ class CommentController extends Controller
 
 
         $comments = Comment::query()
+            ->select(['id', 'body', 'user_id', 'commentable_type', 'commentable_id', 'created_at', 'meta_status'])
             ->with('user:id,name')
 
             ->paginate(10);
@@ -50,7 +52,7 @@ class CommentController extends Controller
         });
 
         return Response::json([
-            'comments' => $comments,
+            'data' => $comments,
         ], 200);
     }
 
@@ -278,7 +280,7 @@ class CommentController extends Controller
     }
 
 
-    public function export(Request $request)
+    public function export(ExportRequest $request)
     {
         // return "OKKKKK";
 

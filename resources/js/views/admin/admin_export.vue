@@ -147,9 +147,7 @@ export default {
                 type: "excel",
                 date_start: "",
                 date_end: ""
-            },
-
-
+            }
         };
     },
     computed: {
@@ -163,7 +161,6 @@ export default {
     },
 
     methods: {
-
         get_data() {
             let currentObj = this;
 

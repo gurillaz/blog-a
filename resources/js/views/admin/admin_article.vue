@@ -233,43 +233,19 @@ export default {
                 });
         },
 
-        delete_resource(resource_id) {
+        delete_resource() {
             let currentObj = this;
-            if (!confirm("Do you want to delete this user?")) {
+            if (!confirm("Do you want to delete this article?")) {
                 return;
             }
-            axios
-                .delete(`/admin/user/${currentObj.resource.id}`)
+            axios(`/admin/article/${currentObj.resource.id}`, {
+                method: "delete"
+            })
                 .then(function(resp) {
-                    currentObj.$router.replace("/admin/users");
-                    // console.log(currentObj.pageCount);
+                    currentObj.$router.push("/admin/articles");
                 })
                 .catch(function(resp) {
-                    console.log("Something wrong");
-                    console.log(resp);
-                });
-        },
-        make_admin() {
-            let currentObj = this;
-            if (
-                !confirm(
-                    `Do you want to make ${currentObj.resource.name} admin?`
-                )
-            ) {
-                return;
-            }
-            if (!confirm(`Are you sure?`)) {
-                return;
-            }
-            axios
-                .post(`/admin/make_admin/${currentObj.resource.id}`)
-                .then(function(resp) {
-                    currentObj.resource.role = "admin";
-                    alert("It is done!");
-                })
-                .catch(function(resp) {
-                    console.log("Something wrong");
-                    console.log(resp);
+                    alert("Article not deleted!");
                 });
         }
     },

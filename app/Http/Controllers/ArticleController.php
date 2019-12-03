@@ -6,6 +6,7 @@ use App\Article;
 use App\Category;
 use App\Exports\ArticlesExport;
 use App\Http\Requests\CreateArticleRequest;
+use App\Http\Requests\ExportRequest;
 use App\Http\Requests\UpdateArticleRequest;
 use App\Tag;
 use Illuminate\Database\Eloquent\Collection;
@@ -26,8 +27,7 @@ class ArticleController extends Controller
      */
     public function index()
     {
-        $resources = Article::query()
-            ->withTrashed()
+        $resources = Article::select(['id', 'title', 'slug', 'category_id', 'created_at', 'publishing_date', 'meta_status'])
             ->with('user:id,name')
             ->with('category:id,name')
             ->withCount('comments')
@@ -201,7 +201,7 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        $this->authorize('edit', $article);
+        $this->authorize('update', $article);
 
         $resource = [];
         $resource_relations = [];
@@ -291,7 +291,22 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        //
+        $this->authorize('delete', $article);
+
+        foreach ($article->comments as $comment) {
+            $comment->replies()->delete();
+            $comment->delete();
+            $comment->save();
+        }
+
+        $article->meta_status = 'deleted';
+        $article->delete();
+        $article->save();
+
+
+        return Response::json([
+            'msg' => 'Article deleted!'
+        ], 200);
     }
 
 
@@ -379,12 +394,11 @@ class ArticleController extends Controller
     }
 
 
-    public function export(Request $request)
+    public function export(ExportRequest $request)
     {
         // return "OKKKKK";
 
         $validated = $request->all();
-
 
         $date_start = "";
         $date_end = "";

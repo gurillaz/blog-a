@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Auth;
-use JWTAuth;
+use Illuminate\Support\Facades\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterFormRequest;
 use App\Http\Requests\ToggleBookmarkRequest;
+use App\Http\Requests\UpdateNameRequest;
+use App\Http\Requests\UpdatePasswordRequest;
 use App\Http\Requests\UpdateUserRequest;
-use Hash;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Auth\ResetsPasswords;
@@ -191,23 +193,38 @@ class AuthController extends Controller
      * @param  string  $response
      * @return \Illuminate\Http\JsonResponse
      */
-
-    public function update(UpdateUserRequest $request, User $user)
+    public function update_auth_password(UpdatePasswordRequest $request)
     {
         $validated = $request->validated();
 
+        $user = Auth::user();
+
+        $user->password = Hash::make($validated['password']);
+
+
+        $user->save();
+
+
+
+
+        return response()->json(
+            [
+                'status' => 'success',
+            ],
+            200
+        );
+    }
+
+
+
+    public function update_auth_name(UpdateNameRequest $request)
+    {
+        
+        $validated = $request->validated();
+
+        $user = Auth::user();
+        
         $user->name = $validated['name'];
-
-
-        if (isset($validated['email']) && $validated['email'] != $user->email) {
-            $user->email = $validated['email'];
-            $user->email_verified_at = NULL;
-            event(new VerifyEmail());
-        }
-
-        if (isset($validated['password'])) {
-            $user->password = Hash::make($validated['password']);
-        }
 
         $user->save();
 
@@ -229,6 +246,9 @@ class AuthController extends Controller
 
         Auth::user()->bookmarks()->toggle($validated['article_id']);
         activity()->log('toggled_bookmark');
+
+
+
         return response()->json(
             [
                 'status' => 'success',

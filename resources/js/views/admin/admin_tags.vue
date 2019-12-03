@@ -267,6 +267,7 @@ export default {
 
                     currentObj.edit_resource = resp.data.resource;
 
+                    currentObj.saving_errors = [];
                     currentObj.edit_resource_dialog = true;
 
                     // currentObj.belongs_to = resp.data.belongs_to;
@@ -324,11 +325,20 @@ export default {
             if (!confirm("Update tag?")) {
                 return;
             }
+
+            let data = {};
+            const original_resource = currentObj.resources.filter(
+                res => res.id === currentObj.edit_resource.id
+            )[0];
+
+            if (original_resource.name !== currentObj.edit_resource.name) {
+                data["name"] = currentObj.edit_resource.name;
+            }
+
+            data["description"] = currentObj.edit_resource.name;
+
             axios
-                .put(
-                    `/admin/tag/${currentObj.edit_resource.id}`,
-                    currentObj.edit_resource
-                )
+                .put(`/admin/tag/${currentObj.edit_resource.id}`, data)
                 .then(function(resp) {
                     // currentObj.resources =
                     currentObj.resources.forEach(function(resource, index) {

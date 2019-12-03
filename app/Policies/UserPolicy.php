@@ -17,9 +17,8 @@ class UserPolicy
      */
     public function viewAny(User $user)
     {
-        
+
         return $user->role === 'admin';
-        
     }
 
     /**
@@ -32,7 +31,6 @@ class UserPolicy
     public function view(User $user, User $model)
     {
         return $user->role === 'admin';
-        
     }
 
     /**
@@ -115,4 +113,4 @@ class UserPolicy
     {
         return $user->role === 'admin';
     }
-}
+

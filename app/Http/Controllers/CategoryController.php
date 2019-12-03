@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Category;
 use App\Exports\CategoriesExport;
 use App\Http\Requests\CreateCategoryRequest;
+use App\Http\Requests\ExportRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -111,7 +112,9 @@ class CategoryController extends Controller
     public function update(UpdateCategoryRequest $request, Category $category)
     {
         $validated = $request->validated();
+        if (isset($validated['name'])) {
         $category->name = $validated['name'];
+        }
         $category->description = $validated['description'];
         $category->save();
         return Response::json([
@@ -131,6 +134,7 @@ class CategoryController extends Controller
             foreach ($article->comments as $comment) {
                 $comment->replies()->delete();
                 $comment->delete();
+                $comment->save();
             }
             $article->meta_status = "deleted";
             $article->delete();
@@ -148,7 +152,7 @@ class CategoryController extends Controller
     }
 
 
-    public function export(Request $request)
+    public function export(ExportRequest $request)
     {
         // return "OKKKKK";
 

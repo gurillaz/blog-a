@@ -13,6 +13,8 @@
                                 x-large
                                 persistent-hint
                                 solo
+                                :error="query_errors.search_term"
+                                :error-messages="query_errors.search_term"
                             ></v-text-field>
                         </v-col>
 
@@ -25,6 +27,7 @@
                                     item-text="name"
                                     clearable
                                     label="Sort by:"
+                                    :error-messages="query_errors.sort_by"
                                 ></v-autocomplete>
                             </v-col>
                             <v-col cols="3" class="py-0">
@@ -35,6 +38,7 @@
                                     item-text="name"
                                     clearable
                                     label="From user:"
+                                    :error-messages="query_errors.user_id"
                                 ></v-autocomplete>
                             </v-col>
                             <v-col cols="6" class="py-0">
@@ -45,6 +49,7 @@
                                     item-text="name"
                                     clearable
                                     label="Has category:"
+                                    :error-messages="query_errors.category_id"
                                 ></v-autocomplete>
                             </v-col>
 
@@ -63,6 +68,7 @@
                                             v-model="query.date_start"
                                             label="Date published after:"
                                             clearable
+                                            :error-messages="query_errors.date_start"
                                             v-on="on"
                                         ></v-text-field>
                                     </template>
@@ -87,6 +93,7 @@
                                         <v-text-field
                                             v-model="query.date_end"
                                             label="Date published before:"
+                                            :error-messages="query_errors.date_end"
                                             clearable
                                             v-on="on"
                                         ></v-text-field>
@@ -110,6 +117,7 @@
                                     label="Tags:"
                                     multiple
                                     hide-selected
+                                    :error-messages="query_errors.tags"
                                 ></v-autocomplete>
                             </v-col>
                         </template>
@@ -149,8 +157,8 @@
         <v-row class="mt-12" v-if="query.search_term !== '' && results.length == 0">
             <v-col cols="12" class="text-center">
                 <p class="title grey--text">
-                    No results for
-                    <span class="black--text">"{{query.search_term}}"</span>. Try something else
+                    Results for
+                    <span class="black--text">"{{query.search_term}}"</span>.
                 </p>
             </v-col>
         </v-row>
@@ -208,6 +216,10 @@ export default {
                 users: [],
                 categories: [],
                 tags: []
+            },
+
+            query_errors: {
+                search_term: ""
             }
         };
     },
@@ -224,21 +236,43 @@ export default {
                 tags: [],
                 sort_by: ""
             };
+            currentObj.query_errors = { search_term: [] };
         },
         get_results() {
             let currentObj = this;
+            if (currentObj.query.search_term.length == 0) {
+                currentObj.query_errors.search_term = [
+                    "The search term field is required."
+                ];
+                return;
+            }
             currentObj.results = [];
+            currentObj.query_errors = { search_term: [] };
+
+            let data = {};
+
+            Object.keys(currentObj.query).forEach(function(prop) {
+                if (
+                    currentObj.query[prop] &&
+                    currentObj.query[prop].length !== 0
+                ) {
+                    data[prop] = currentObj.query[prop];
+                }
+            });
+
             axios
                 .get(`/guest/search`, {
-                    params: currentObj.query
+                    params: data
                 })
                 .then(function(resp) {
                     currentObj.results = resp.data.results.data;
 
                     // currentObj.results = resp.data.data;
                     currentObj.next_page_url = resp.data.results.next_page_url;
+                    currentObj.query_errors = { search_term: [] };
                 })
                 .catch(function(resp) {
+                    currentObj.query_errors = resp.response.data.errors;
                     console.log(resp);
                 });
         },

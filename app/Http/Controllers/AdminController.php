@@ -72,10 +72,17 @@ class AdminController extends Controller
     {
         $resources = [];
 
-        $articles = Article::query()->with('user:id,name')->with('category:id,name')->orderBy('created_at', 'desc')->get();
+        $articles = Article::query()
+            ->where('meta_status', 'published')
+            ->with('user:id,name')
+            ->with('category:id,name')
+            ->orderBy('created_at', 'desc')->get();
 
 
-        $currently_featured = Article::query()->where('meta_is-feature', 'true')
+        $currently_featured = Article::query()
+            ->where('meta_status', 'published')
+
+            ->where('meta_is-feature', 'true')
             ->orderBy('meta_list_place', 'asc')
             ->with('user:id,name')->with('category:id,name')->get();
 

@@ -37,7 +37,7 @@ class CreateCategoryRequest extends FormRequest
 
 
 
-            'name' => 'required|string|min:3|max:100|unique:categories,name',
+            'name' => 'required|string|min:3|max:20|unique:categories,name',
             'description' => 'max:5000',
 
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Article;
 use App\Comment;
 use App\Exports\UsersExport;
+use App\Http\Requests\ExportRequest;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -239,7 +240,7 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function export(Request $request)
+    public function export(ExportRequest $request)
     {
         // return "OKKKKK";
 

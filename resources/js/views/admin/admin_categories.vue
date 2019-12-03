@@ -268,6 +268,7 @@ export default {
                     currentObj.edit_resource = resp.data.resource;
 
                     currentObj.edit_resource_dialog = true;
+                    currentObj.saving_errors = [];
 
                     // currentObj.belongs_to = resp.data.belongs_to;
                     // currentObj.created_by = resp.data.created_by;
@@ -325,10 +326,22 @@ export default {
             if (!confirm("Update category?")) {
                 return;
             }
+
+                        let data = {};
+            const original_resource = currentObj.resources.filter(
+                res => res.id === currentObj.edit_resource.id
+            )[0];
+
+            if (original_resource.name !== currentObj.edit_resource.name) {
+                data["name"] = currentObj.edit_resource.name;
+            }
+
+            data["description"] = currentObj.edit_resource.name;
+
             axios
                 .put(
                     `/admin/category/${currentObj.edit_resource.id}`,
-                    currentObj.edit_resource
+                    data
                 )
                 .then(function(resp) {
                     // currentObj.resources =

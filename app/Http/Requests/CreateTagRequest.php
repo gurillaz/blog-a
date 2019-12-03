@@ -37,7 +37,7 @@ class CreateTagRequest extends FormRequest
 
 
 
-            'name' => 'required|string|min:3|max:100|unique:tags,name',
+            'name' => 'required|string|min:3|max:20|unique:tags,name',
             'description' => 'max:5000',
 
 

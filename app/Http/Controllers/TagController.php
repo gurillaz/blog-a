@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\TagsExport;
 use App\Http\Requests\CreateTagRequest;
+use App\Http\Requests\ExportRequest;
 use App\Http\Requests\UpdateTagRequest;
 use App\Tag;
 use Carbon\Carbon;
@@ -116,7 +117,9 @@ class TagController extends Controller
     public function update(UpdateTagRequest $request, Tag $tag)
     {
         $validated = $request->validated();
-        $tag->name = $validated['name'];
+        if (isset($validated['name'])) {
+            $tag->name = $validated['name'];
+        }
         $tag->description = $validated['description'];
         $tag->save();
         return Response::json([
@@ -141,7 +144,7 @@ class TagController extends Controller
     }
 
 
-    public function export(Request $request)
+    public function export(ExportRequest $request)
     {
         // return "OKKKKK";
 
