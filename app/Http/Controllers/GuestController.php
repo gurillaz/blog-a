@@ -133,7 +133,7 @@ class GuestController extends Controller
 
         if ($validated->get('sort_by') != null) {
             if ($validated->get('sort_by') == 'title') {
-                $query->orderBy('title', 'desc');
+                $query->orderBy('title', 'asc');
             } elseif ($validated->get('sort_by') == 'publishing_date') {
                 $query->orderBy('publishing_date', 'desc');
             } elseif ($validated->get('sort_by') == 'comments_count') {

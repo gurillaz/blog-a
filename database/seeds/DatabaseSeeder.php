@@ -36,7 +36,7 @@ class DatabaseSeeder extends Seeder
         $users = User::all('id');
 
         factory('App\Category', 12)->create(['user_id' => $users->random()->id]);
-        factory('App\Tag', 20)->create(['user_id' => $users->random()->id]);
+        factory('App\Tag', 20)->create(['user_id' => 1]);
 
         $categories = Category::all('id');
         $tags = Tag::all('id');

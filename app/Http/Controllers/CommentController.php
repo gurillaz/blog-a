@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Article;
 use App\Comment;
+use App\Exports\CommentsExport;
 use App\Http\Requests\CreateCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
@@ -235,10 +237,10 @@ class CommentController extends Controller
 
         $comment->meta_status = "published";
         $comment->save();
-        
-        
+
+
         activity()->performedOn($comment)->log('aproved');
-        
+
         return Response::json([
             'msg' => "success"
         ], 200);
@@ -273,5 +275,37 @@ class CommentController extends Controller
         return Response::json([
             'msg' => "success"
         ], 200);
+    }
+
+
+    public function export(Request $request)
+    {
+        // return "OKKKKK";
+
+        $validated = $request->all();
+
+
+        $date_start = "";
+        $date_end = "";
+        if (isset($validated['date_start'])) {
+
+            $date_start = Carbon::parse($validated['date_start'])->toDateTimeString();
+        }
+
+        if (isset($validated['date_end'])) {
+            $date_end = Carbon::parse($validated['date_end'])->setTimeFrom(Carbon::now())->toDateTimeString();
+        }
+
+        if (isset($validated['type'])) {
+            $file_name = 'comments_' . Carbon::now()->toDateTimeString();
+            if ($validated['type'] == 'csv') {
+                return (new CommentsExport($date_start, $date_end))->download($file_name . '.csv', \Maatwebsite\Excel\Excel::CSV);
+            } else {
+
+                return (new CommentsExport($date_start, $date_end))->download($file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+            }
+        }
+
+        return "File genereation failed. Try again!";
     }
 }

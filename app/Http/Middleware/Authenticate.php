@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Authenticate extends Middleware
 {
@@ -25,6 +26,7 @@ class Authenticate extends Middleware
                 return $this->auth->shouldUse($guard);
             }
         }
+
         return 'authentication_error';
     }
 

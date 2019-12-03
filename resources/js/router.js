@@ -22,6 +22,7 @@ import AdminUser from './views/admin/admin_user.vue';
 
 import AdminArticle from './views/admin/admin_article.vue';
 import AdminActivity from './views/admin/admin_activity.vue';
+import AdminExport from './views/admin/admin_export.vue';
 
 
 // Guest pages
@@ -253,6 +254,10 @@ const router = new VueRouter({
                     path: 'activity',
                     name: 'admin.activity',
                     component: AdminActivity,
+                }, {
+                    path: 'export',
+                    name: 'admin.export',
+                    component: AdminExport,
                 },
             ]
         },

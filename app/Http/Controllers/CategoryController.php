@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Exports\CategoriesExport;
 use App\Http\Requests\CreateCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
@@ -132,7 +134,7 @@ class CategoryController extends Controller
             }
             $article->meta_status = "deleted";
             $article->delete();
-            $article->save();   
+            $article->save();
         }
         // $category->articles()->comments()->delete();
         // $category->articles()->delete();
@@ -143,5 +145,37 @@ class CategoryController extends Controller
         return Response::json([
             'msg' => 'success',
         ], 200);
+    }
+
+
+    public function export(Request $request)
+    {
+        // return "OKKKKK";
+
+        $validated = $request->all();
+
+
+        $date_start = "";
+        $date_end = "";
+        if (isset($validated['date_start'])) {
+
+            $date_start = Carbon::parse($validated['date_start'])->toDateTimeString();
+        }
+
+        if (isset($validated['date_end'])) {
+            $date_end = Carbon::parse($validated['date_end'])->setTimeFrom(Carbon::now())->toDateTimeString();
+        }
+
+        if (isset($validated['type'])) {
+            $file_name = 'categories_' . Carbon::now()->toDateTimeString();
+            if ($validated['type'] == 'csv') {
+                return (new CategoriesExport($date_start, $date_end))->download($file_name . '.csv', \Maatwebsite\Excel\Excel::CSV);
+            } else {
+
+                return (new CategoriesExport($date_start, $date_end))->download($file_name . '.xlsx', \Maatwebsite\Excel\Excel::XLSX);
+            }
+        }
+
+        return "File genereation failed. Try again!";
     }
 }
