@@ -1,12 +1,12 @@
 <template>
     <v-app>
         <v-app-bar app absolute color="white" height="100" elevation="2">
-            <v-container class="pt-0 mt-0 pb-0">
-                <v-row class="py-0 mb-1">
-                    <v-col cols="12" class="d-flex justify-content-between py-0">
+            <v-container class="pt-0 mt-0 pb-0" fluid>
+                <v-row class="py-0 mb-1" align="center" justify="center">
+                    <v-col cols="9" class="d-flex justify-content-between py-0">
                         <router-link
                             to="/"
-                            class="ml-1 toolbar-logo serif-font grey--text text--darken-3"
+                            class="toolbar-logo serif-font grey--text text--darken-3"
                         >
                             <v-icon large color="grey darken-3" class="mb-1">mdi-newspaper</v-icon>Blog-A
                         </router-link>
@@ -41,8 +41,8 @@
                         <!-- <v-app-bar-nav-icon @click.stop="drawer = !drawer" /> -->
                     </v-col>
                 </v-row>
-                <v-row class="py-0 mt-0">
-                    <v-col cols="12" class="py-0 mt-0 px-0">
+                <v-row class="py-0 mt-0" align="center" justify="center">
+                    <v-col cols="9" class="py-0 mt-0">
                         <v-toolbar
                             flat
                             tile
@@ -92,8 +92,14 @@
             </v-container>
         </v-app-bar>
         <v-content>
-            <v-container>
-                <router-view></router-view>
+            <v-container fluid>
+                <v-row align="center" justify="center">
+                    <v-col cols="9">
+                        <v-container fluid>
+                            <router-view></router-view>
+                        </v-container>
+                    </v-col>
+                </v-row>
             </v-container>
         </v-content>
         <v-footer absolute app class="font-weight-medium" color="white">

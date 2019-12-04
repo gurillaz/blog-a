@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <div>
         <v-row class="mb-12">
             <v-col cols="12">
                 <span class="headline">{{resource.name}}</span>
@@ -81,7 +81,7 @@
                 <p class="subtitle grey--text my-5">User hasn't posted any comments yet.</p>
             </v-col>
         </v-row>
-    </v-container>
+    </div>
 </template>
 
 <script>

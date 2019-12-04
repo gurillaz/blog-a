@@ -139,7 +139,13 @@
         </v-app-bar>
 
         <v-content>
-            <router-view></router-view>
+            <v-container fluid>
+                <v-row align="center" justify="center">
+                    <v-col cols="11">
+                        <router-view></router-view>
+                    </v-col>
+                </v-row>
+            </v-container>
         </v-content>
     </v-app>
 </template>

@@ -21,9 +21,9 @@ import Vuetify from 'vuetify';
 import "vuetify/dist/vuetify.min.css"
 
 Vue.use(Vuetify);
-const opts = {}
+const opts = {};
 const vuetify =  new Vuetify(opts)
-
+//
 // set Vue Router
 Vue.router = router;
 // Vue.use(VueRouter);

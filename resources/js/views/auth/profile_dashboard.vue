@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <div>
         <v-row class="mb-12">
             <v-col cols="10">
                 <span class="headline">{{resource.name}}</span>
@@ -257,7 +257,7 @@
                 </v-card>
             </v-dialog>
         </v-row>
-    </v-container>
+    </div>
 </template>
 
 <script>

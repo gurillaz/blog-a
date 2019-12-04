@@ -1,5 +1,5 @@
     <template>
-    <v-container>
+    <div>
         <v-row></v-row>
         <v-row class="pt-0 mt-0">
             <v-col cols="12">
@@ -181,7 +181,7 @@
                 >Load more</v-btn>
             </v-col>
         </v-row>
-    </v-container>
+    </div>
 </template>
 
 <script>

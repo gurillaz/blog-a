@@ -336,7 +336,7 @@ export default {
                 data["name"] = currentObj.edit_resource.name;
             }
 
-            data["description"] = currentObj.edit_resource.name;
+            data["description"] = currentObj.edit_resource.description;
 
             axios
                 .put(

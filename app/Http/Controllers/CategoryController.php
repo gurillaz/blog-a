@@ -113,10 +113,12 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
         if (isset($validated['name'])) {
-        $category->name = $validated['name'];
+            $category->name = $validated['name'];
         }
         $category->description = $validated['description'];
         $category->save();
+
+        
         return Response::json([
             'msg' => 'sucess',
         ], 200);

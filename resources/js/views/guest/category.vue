@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <div>
         <v-row class="mb-12">
             <v-col cols="12">
                 <p class="title py-0 my-0">Category</p>
@@ -19,7 +19,7 @@
                 <article12 :article="article"></article12>
             </v-col>
         </v-row>
-    </v-container>
+    </div>
 </template>
 
 <script>
@@ -75,7 +75,7 @@ export default {
             })
             .catch(function(resp) {
                 console.log(resp);
-                currentObj.$router.push({name:'main.error'});
+                currentObj.$router.push({ name: "main.error" });
             });
     }
 };

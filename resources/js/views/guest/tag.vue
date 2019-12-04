@@ -1,5 +1,5 @@
 <template>
-    <v-container>
+    <div>
         <v-row class="mb-12">
             <v-col cols="12">
                 <p class="title py-0 my-0">Tag</p>
@@ -22,7 +22,7 @@
                 <article12 :article="article"></article12>
             </v-col>
         </v-row>
-    </v-container>
+    </div>
 </template>
 
 <script>

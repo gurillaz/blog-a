@@ -335,7 +335,7 @@ export default {
                 data["name"] = currentObj.edit_resource.name;
             }
 
-            data["description"] = currentObj.edit_resource.name;
+            data["description"] = currentObj.edit_resource.description;
 
             axios
                 .put(`/admin/tag/${currentObj.edit_resource.id}`, data)
