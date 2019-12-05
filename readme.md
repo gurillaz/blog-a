@@ -1,4 +1,8 @@
-## Blog-e
+<h1 align="center">Welcome to blog-a 👋</h1>
+<p>
+</p>
+
+> A simple blog. Made with Laravel, Vue and Vuetify.
 
 ## Install
 
@@ -47,6 +51,21 @@ npm run watch
 ```
 php artisan serve
 ```
+
+## Usage
+
+```
 Make sure the port 8000 is not in use. You can use another port by adding
 ```--port PORT_NUMBER``` to the previous command.
 Your application should be running at: http://127.0.0.1:8000
+
+```
+
+## Author
+
+👤 **Klevis Sahitaj**
+
+* Website: gurillaz.github.io
+* Github: [@gurillaz](https://github.com/gurillaz)
+
+
