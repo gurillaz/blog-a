@@ -32,7 +32,7 @@ class SearchRequest extends FormRequest
 
 
 
-            'search_term' => 'sometimes|required|regex:/^[a-zA-Z0-9\s]+$/',
+            'search_term' => 'sometimes|required|min:3|regex:/^[a-zA-Z0-9\s]+$/',
             'user_id' => 'sometimes|required|alpha_dash|exists:users,id',
             'category_id' => 'sometimes|required|alpha_dash|exists:categories,id',
             'date_start' => 'sometimes|required|string|max:10',
