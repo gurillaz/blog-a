@@ -15,6 +15,6 @@
 #app {
     /* background-color: aqua; */
   /* color:# ; */
-  background-color: rgba(0, 0, 0, 0.03);  
+  background-color: rgba(0, 0, 0, 0.024);  
 }
 </style>

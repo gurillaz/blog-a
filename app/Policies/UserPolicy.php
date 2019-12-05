@@ -11,7 +11,7 @@ class UserPolicy
 
     /**
      * Determine whether the user can view any models.
-     *
+     *  
      * @param  \App\User  $user
      * @return mixed
      */
@@ -113,4 +113,4 @@ class UserPolicy
     {
         return $user->role === 'admin';
     }
-
+}
