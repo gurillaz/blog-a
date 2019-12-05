@@ -95,50 +95,56 @@ class GuestController extends Controller
     {
         $validated = $request->validated();
         $query = Article::select([
-            'articles.id', 'slug', 'summary', 'title', 'image_path', 'publishing_date', 'category_id', 'articles.user_id',
+            'articles.id', 'slug', 'summary', 'title', 'image_path', 'publishing_date', 'articles.category_id as category_id', 'articles.user_id as user_id',
             'users.name as user_name', 'categories.name as category_name'
         ])
 
-            ->where('meta_status', 'published')
-
-            ->join('users', 'users.id', '=', 'articles.user_id')
-            ->join('categories', 'categories.id', '=', 'articles.category_id')
-            ->with(['category:id,name', 'user:id,name'])
-            ->withCount('comments');
+        
+        ->join('users', 'users.id', '=', 'articles.user_id')
+        ->join('categories', 'categories.id', '=', 'articles.category_id')
+        ->with(['category:id,name', 'user:id,name'])
+        ->withCount('comments');
         // ->where('meta_status', 'published');
         if (isset($validated['search_term'])) {
-            $query = $query->where('title', 'LIKE', '%' . $validated['search_term'] . '%');
-            $query = $query->orWhere('body', 'LIKE', '%' . $validated['search_term'] . '%');
-            $query = $query->orWhere('summary', 'LIKE', '%' . $validated['search_term'] . '%');
+            $query
+            ->where(function($qr) use($validated){
+
+
+
+                
+              $qr  
+                ->orWhere('title', 'LIKE', '%' . $validated['search_term'] . '%')
+                ->orWhere('body', 'LIKE', '%' . $validated['search_term'] . '%')
+                ->orWhere('summary', 'LIKE', '%' . $validated['search_term'] . '%');
+            });
         }
         if (isset($validated['user_id'])) {
-
-            $query = $query->where('articles.user_id', $validated['user_id']);
+            $query->where('articles.user_id', $validated['user_id']);
         }
         if (isset($validated['category_id'])) {
-
-            $query = $query->where('articles.category_id', $validated['category_id']);
+            
+            $query->where('articles.category_id', $validated['category_id']);
         }
         if (isset($validated['date_start'])) {
-            $date = Carbon::parse($validated['date_start'])->toDateTimeString();
-            $query = $query->where('publishing_date', '>=', $date);
+            $date_start = Carbon::parse($validated['date_start'])->toDateTimeString();
+            $query->where('publishing_date', '>=', $date_start);
         }
-
+        
         if (isset($validated['date_end'])) {
             $date_end = Carbon::parse($validated['date_end'])->setTimeFrom(Carbon::now())->toDateTimeString();
-            $query = $query->where('publishing_date', '<=', $date);
+            $query->where('publishing_date', '<=', $date_end);
         }
         if (isset($validated['tags'])) {
-
+            
             $tags = $validated['tags'];
-            $query = $query->whereHas('tags', function (Builder $q) use ($tags) {
+            $query->whereHas('tags', function (Builder $q) use ($tags) {
                 $q->whereIn('id', $tags);
             });
         }
-
-
+        
+        
         if (isset($validated['sort_by'])) {
-
+            
             if ($validated['sort_by'] == 'title') {
                 $query->orderBy('title', 'asc');
             } elseif ($validated['sort_by'] == 'publishing_date') {
@@ -153,7 +159,10 @@ class GuestController extends Controller
                 $query->orderBy('title', 'desc');
             }
         }
-        $results = $query->paginate(10);
+        $results = $query
+        
+        ->where('meta_status', 'published')
+        ->paginate(10);
 
 
 

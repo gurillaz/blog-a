@@ -13,7 +13,7 @@
                                 x-large
                                 persistent-hint
                                 solo
-                                :error="query_errors.search_term"
+                                :error="query_errors.search_term?true:false"
                                 :error-messages="query_errors.search_term"
                             ></v-text-field>
                         </v-col>
