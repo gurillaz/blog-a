@@ -1,5 +1,16 @@
     <template>
     <v-card class="pl-0 py-0" tile outlined>
+            <v-sheet
+      label
+      tile
+      color="red"
+      class="text-center"
+      min-width="110px"
+      dark
+      style="position: absolute; top: 0px; left: 0px; z-index:1000;"
+      
+    ><router-link :to="`/category/${article.category.id}`" class="text-uppercase caption white--text" style="text-decoration:none;">{{article.category.name}}</router-link>
+    </v-sheet>
         <v-container class="pl-0 py-0">
             <v-row justify="space-between">
                 <v-col cols="4" class="ma-0 py-0">
