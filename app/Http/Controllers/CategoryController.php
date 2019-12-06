@@ -82,7 +82,7 @@ class CategoryController extends Controller
         $resource = $category;
         $resource_relations['articles'] =
             $category->articles(['id', 'slug', 'summary', 'title', 'image_path', 'category_id', 'user_id'])
-            ->with("user:id,name,role")->withCount('comments')->get();
+            ->with(["user:id,name,role","category:id,name"])->withCount('comments')->get();
 
 
         return Response::json([
